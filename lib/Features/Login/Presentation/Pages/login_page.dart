@@ -65,6 +65,7 @@ class LoginPage extends StatelessWidget {
                       },
                     ),
                     CustomTextFormField(
+                      secureText: true,
                       ctr: passwordController,
                       txt: "كلمة المرور",
                       validator: (txt) {
