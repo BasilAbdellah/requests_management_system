@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:requests_management_system/Core/Utils/Theme/my_app_theme.dart';
-import 'package:requests_management_system/Features/Login/Presentaion/Pages/login_page.dart';
+import 'package:requests_management_system/Features/Login/Presentation/Pages/login_page.dart';
+import 'package:requests_management_system/Features/Profile/Presentation/Pages/Profile_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -11,11 +12,11 @@ class MyApp extends StatelessWidget {
       theme: MyAppTheme.myLightTheme,
       debugShowCheckedModeBanner: false,
       routes: {
-        LoginPage.routeName:(_)=>LoginPage(),
+        LoginPage.routeName: (_) => LoginPage(),
+        ProfilePage.routeName: (_) => ProfilePage()
       },
       initialRoute: LoginPage.routeName,
-      locale: Locale("ar"),
+      locale: const Locale('ar', ''),
     );
   }
 }
-
