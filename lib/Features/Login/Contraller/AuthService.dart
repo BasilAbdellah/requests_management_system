@@ -5,7 +5,7 @@ class AuthService {
   final Dio dio = Dio();
 
   AuthService() {
-    dio.options.baseUrl = "https://localhost:7159/api/";
+    dio.options.baseUrl = "http://197.53.144.62:8080/api/";
     dio.options.headers = {
       'Content-Type': 'application/json',
     };
@@ -27,7 +27,7 @@ class AuthService {
       } else {
         throw Exception("Unexpected error occurred: ${response.statusCode}");
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       throw Exception(
           "Login failed: ${e.response?.data['message'] ?? e.message}");
     }
