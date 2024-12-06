@@ -54,10 +54,11 @@ class UpdatePasswordPage extends StatelessWidget {
                     CustomTextFormField(
                       ctr: oldPasswordController,
                       txt: "كلمة المرور القديمة",
-                      validator: (value) => passwordProvider.validatePassword(
-                        value,
-                        "كلمة المرور القديمة",
-                      ),
+                      validator: (value) {
+                        return value!.trim().isEmpty
+                            ? "كلمة المرور القديمة مطلوبة"
+                            : null;
+                      },
                     ),
                     CustomTextFormField(
                       ctr: newPasswordController,

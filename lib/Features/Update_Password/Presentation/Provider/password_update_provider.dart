@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:requests_management_system/Features/Update_Password/Contraller/updatepassword_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PasswordUpdateProvider extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
+  UpdatePasswordService _passwordService = UpdatePasswordService();
 
   String? validatePassword(String? password, String fieldName) {
     if (password == null || password.trim().isEmpty) {
@@ -35,12 +38,15 @@ class PasswordUpdateProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Simulated API call
-      await Future.delayed(const Duration(seconds: 2));
-
-      // Mock validation for old password
-      if (oldPassword != "userOldPassword") {
-        errorMessage = "كلمة المرور القديمة غير صحيحة";
+      final prefs = await SharedPreferences.getInstance();
+      var employeeId = prefs.getInt('employeeId')??2;
+      var result = await _passwordService.updatePassword(
+          employeeId: employeeId,
+          oldPass: oldPassword,
+          password: newPassword,
+          confirmPassword: newPassword);
+      if (!result.status) {
+        errorMessage = result.message;
         isLoading = false;
         notifyListeners();
         return false;
