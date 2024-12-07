@@ -35,15 +35,6 @@ class ProfilePage extends StatelessWidget {
             );
           }
 
-          if (data == null) {
-            return Center(
-              child: Text(
-                "Failed to load profile data.",
-                style: TextStyle(color: Colors.red, fontSize: 18),
-              ),
-            );
-          }
-
           return Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
