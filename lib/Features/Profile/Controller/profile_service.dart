@@ -2,32 +2,29 @@ import 'package:dio/dio.dart';
 import 'package:requests_management_system/Features/Profile/Data/ProfileModel.dart';
 
 class ProfileService {
-  static Dio dio = Dio();
+  final Dio dio;
+  final String token;
 
-  static Future<ProfileModel> getProfile() async {
+  ProfileService({required this.token}) : dio = Dio() {
+    // Set default base URL and headers for Dio
+    dio.options.baseUrl = "http://102.45.188.153:8080/api/";
+    dio.options.headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+  }
+
+  Future<ProfileModel> getProfile(int employeeId) async {
     try {
-      // Make the GET request
-      final response = await dio.get(
-        "http://197.53.144.62:8080/api/Employee/Profile1",
-        options: Options(
-          headers: {
-            'Authorization':
-                'Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiTW9zdGFmYSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiMiIsImV4cCI6MTczMzUwOTQ1OCwiaXNzIjoiU2Nob29sQXBwIiwiYXVkIjoiU2Nob29sQ2xpZW50In0.HTYZXfQQa1w_fdmoY4GmuDV9bvp-pHnF88gcdoxkjSM"}', // Send the JWT token in the Authorization header
-          },
-        ),
-      );
+      // Use the employeeId dynamically in the API endpoint
+      final response = await dio.get("Employee/Profile/$employeeId");
 
       // Check if the response is successful
       if (response.statusCode == 200) {
         print("API Response: ${response.data}");
 
-        // Ensure the response is a Map
-        if (response.data is Map<String, dynamic>) {
-          // Parse the JSON into ProfileModel
-          return ProfileModel.fromJson(response.data);
-        } else {
-          throw Exception("Unexpected response format: ${response.data}");
-        }
+        // Parse the JSON into ProfileModel
+        return ProfileModel.fromJson(response.data);
       } else {
         throw Exception("Unexpected error occurred: ${response.statusCode}");
       }
@@ -42,24 +39,3 @@ class ProfileService {
     }
   }
 }
-
-// class ProfileService {
-//   static Dio dio = Dio();
-//
-//   static Future<ProfileModel> getProfile() async {
-//     try {
-//       final response = await dio.get(
-//         "http://197.53.144.62:8080/api/Employee/Profile2",
-//       );
-//       if (response.statusCode == 200) {
-//         print(response.data);
-//         return ProfileModel.fromJson(response.data);
-//       } else {
-//         throw Exception("Unexpected error occurred: ${response.statusCode}");
-//       }
-//     } on DioException catch (e) {
-//       throw Exception(
-//           "Login failed: ${e.response?.data['message'].toString() ?? e.message}");
-//     }
-//   }
-// }
