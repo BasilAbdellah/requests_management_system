@@ -17,21 +17,34 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Perform login
       _loginResponse = await _authService.login(
         employeeId: employeeId,
         password: password,
       );
 
       if (_loginResponse!.status) {
+        // Login was successful
+        print("تم تسجيل الدخول بنجاح!");
+        print("Token: ${_loginResponse!.token}");
+
         sshowDialog(
           context,
           "تم تسجيل الدخول بنجاح",
           _loginResponse!.message,
           Colors.green,
         );
-        print("تم تسجيل الدخول بنجاح!");
-        Navigator.pushReplacementNamed(context, ProfilePage.routeName);
+        // Navigate to ProfilePage with token and employeeId
+        Navigator.pushNamed(
+          context,
+          ProfilePage.routeName,
+          arguments: {
+            'token': _loginResponse!.token, // Pass the dynamic token
+            'employeeId': employeeId, // Pass the logged-in employee ID
+          },
+        );
       } else {
+        // Show error dialog
         sshowDialog(
           context,
           "خطأ",
@@ -40,6 +53,7 @@ class AuthProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
+      // Handle exceptions and show an error dialog
       sshowDialog(
         context,
         "خطأ",
