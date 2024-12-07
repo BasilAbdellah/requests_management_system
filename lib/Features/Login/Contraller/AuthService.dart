@@ -1,17 +1,19 @@
 import 'package:dio/dio.dart';
-import 'package:requests_management_system/Features/Login/Data/EmployeeModel.dart';
+import 'package:requests_management_system/Features/Login/Contraller/login_service_jwt.dart';
+import 'package:requests_management_system/Features/Login/Data/EmployeeModel.dart'; // Import AuthServiceJWT class
 
 class AuthService {
   final Dio dio = Dio();
 
   AuthService() {
-    dio.options.baseUrl = "https://localhost:7159/api/";
+    dio.options.baseUrl = "http://102.45.188.153:8080/api/";
     dio.options.headers = {
       'Content-Type': 'application/json',
     };
   }
 
-  Future<LoginResponse> login(
+  /// Login API: Send employee credentials and return response
+  Future<dynamic> login(
       {required int employeeId, required String password}) async {
     try {
       final response = await dio.post(
@@ -23,11 +25,16 @@ class AuthService {
       );
 
       if (response.statusCode == 200) {
-        return LoginResponse.fromJson(response.data);
+        // Save JWT using AuthServiceJWT
+        final token =
+            response.data['token']; // Adjust based on your API response key
+        await AuthServiceJWT.saveToken(token); // Save token securely
+        return LoginResponse.fromJson(response
+            .data); // Return response data (optional, can adjust as needed)
       } else {
         throw Exception("Unexpected error occurred: ${response.statusCode}");
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       throw Exception(
           "Login failed: ${e.response?.data['message'] ?? e.message}");
     }
