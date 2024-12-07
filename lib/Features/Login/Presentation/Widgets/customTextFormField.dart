@@ -38,11 +38,13 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           border: const OutlineInputBorder(),
           hintText: widget.txt,
           labelStyle: const TextStyle(
-            fontSize: 14,
+            fontSize: 16,
+            fontWeight: FontWeight.w900,
             textBaseline: TextBaseline.alphabetic,
           ),
           hintStyle: const TextStyle(
-            fontSize: 12,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
             color: Colors.grey,
           ),
           prefixIcon: widget.secureText

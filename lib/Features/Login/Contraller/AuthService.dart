@@ -4,7 +4,6 @@ import 'package:requests_management_system/Features/Login/Data/EmployeeModel.dar
 
 class AuthService {
   final Dio dio = Dio();
-
   AuthService() {
     dio.options.baseUrl = "http://102.45.188.153:8080/api/";
     dio.options.headers = {
@@ -16,6 +15,8 @@ class AuthService {
   Future<dynamic> login(
       {required int employeeId, required String password}) async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+
       final response = await dio.post(
         "Employee/Login",
         data: {
@@ -26,11 +27,9 @@ class AuthService {
 
       if (response.statusCode == 200) {
         // Save JWT using AuthServiceJWT
-        final token =
-            response.data['token']; // Adjust based on your API response key
+        final token = response.data['token']; // Adjust based on your API response key
         await AuthServiceJWT.saveToken(token); // Save token securely
-        return LoginResponse.fromJson(response
-            .data); // Return response data (optional, can adjust as needed)
+        return LoginResponse.fromJson(response.data); // Return response data (optional, can adjust as needed)
       } else {
         throw Exception("Unexpected error occurred: ${response.statusCode}");
       }
