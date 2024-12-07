@@ -19,6 +19,10 @@ class UpdatePasswordPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final passwordProvider =
         Provider.of<PasswordUpdateProvider>(context, listen: false);
+  // Extract arguments passed to the UpdatePasswordPage from profile
+    final arguments = ModalRoute.of(context)?.settings.arguments as Map?;
+    final token = arguments?['token'];
+    final employeeId = arguments?['employeeId'];
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -89,6 +93,8 @@ class UpdatePasswordPage extends StatelessWidget {
                               if (myKey.currentState!.validate()) {
                                 final success =
                                     await passwordProvider.updatePassword(
+                                      employeeId: employeeId as int,
+                                      token: token as String,
                                   oldPassword: oldPasswordController.text,
                                   newPassword: newPasswordController.text,
                                 );

@@ -3,10 +3,9 @@ import 'package:requests_management_system/Features/Login/Data/base_responce.dar
 
 class UpdatePasswordService {
   final Dio dio = Dio();
+  final String token;
 
-  UpdatePasswordService() {
-    const token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiTW9zdGFmYSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiMiIsImV4cCI6MTczMzUwOTQ1OCwiaXNzIjoiU2Nob29sQXBwIiwiYXVkIjoiU2Nob29sQ2xpZW50In0.HTYZXfQQa1w_fdmoY4GmuDV9bvp-pHnF88gcdoxkjSM';
+  UpdatePasswordService({required this.token}) {
     dio.options.baseUrl = "http://192.168.1.108:8080/api/";
     dio.options.headers = {
       'Content-Type': 'application/json',

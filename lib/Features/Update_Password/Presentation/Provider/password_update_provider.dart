@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:requests_management_system/Features/Update_Password/Contraller/updatepassword_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class PasswordUpdateProvider extends ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
-  UpdatePasswordService _passwordService = UpdatePasswordService();
+  late UpdatePasswordService _passwordService;
 
   String? validatePassword(String? password, String fieldName) {
     if (password == null || password.trim().isEmpty) {
@@ -30,16 +29,17 @@ class PasswordUpdateProvider extends ChangeNotifier {
   }
 
   Future<bool> updatePassword({
+    required int employeeId,
+    required String token,
     required String oldPassword,
     required String newPassword,
   }) async {
     isLoading = true;
     errorMessage = null;
     notifyListeners();
+    _passwordService = UpdatePasswordService(token: token);
 
     try {
-      final prefs = await SharedPreferences.getInstance();
-      var employeeId = prefs.getInt('employeeId')??2;
       var result = await _passwordService.updatePassword(
           employeeId: employeeId,
           oldPass: oldPassword,
