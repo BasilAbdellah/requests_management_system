@@ -28,7 +28,7 @@ class ProfilePage extends StatelessWidget {
         builder: (context, profileProvider, child) {
           var data = profileProvider.profileModel;
 
-          if (data == null) {
+          if (data == null || profileProvider.profileModel?.employeeId != employeeId) {
             profileProvider.fetchProfile(token: token, employeeId: employeeId);
             return const Center(
               child: CircularProgressIndicator(),
@@ -117,7 +117,13 @@ class ProfilePage extends StatelessWidget {
                             subtitle: "تحديث طلبات",
                             onTap: () {
                               Navigator.pushNamed(
-                                  context, '/UpdatePasswordPage');
+                                context,
+                                '/UpdatePasswordPage',
+                                arguments: {
+                                  'token': token, // Pass the dynamic token
+                                  'employeeId': employeeId, // Pass the logged-in employee ID
+                                },
+                              );
                             },
                           ),
                           _buildFeatureCard(

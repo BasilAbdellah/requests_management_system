@@ -73,9 +73,15 @@ class AuthProvider extends ChangeNotifier {
       builder: (ctx) => AlertDialog(
         title: Text(
           title,
+          textDirection: TextDirection.rtl,
+          textAlign: TextAlign.right,
           style: TextStyle(color: color),
         ),
-        content: Text(message),
+        content: Text(
+          message,
+          textDirection: TextDirection.rtl,
+          textAlign: TextAlign.right,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),

@@ -7,7 +7,7 @@ class ProfileService {
 
   ProfileService({required this.token}) : dio = Dio() {
     // Set default base URL and headers for Dio
-    dio.options.baseUrl = "http://102.45.188.153:8080/api/";
+    dio.options.baseUrl = "http://192.168.1.108:8080/api/";
     dio.options.headers = {
       'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
