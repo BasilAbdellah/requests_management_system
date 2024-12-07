@@ -9,20 +9,14 @@ class ProfileModel {
     this.regularLeaveCount,
   });
 
-  ProfileModel.fromJson(dynamic json) {
-    employeeId = json['employeeId'] is int
-        ? json['employeeId']
-        : int.tryParse(json['employeeId'].toString()) ?? 0;
+  ProfileModel.fromJson(Map<String, dynamic> json) {
+    employeeId = _parseInt(json['employeeId']);
     employeeName = json['employeeName'] ?? '';
     departmentName = json['departmentName'] ?? '';
-    casualLeaveCount = json['casualLeaveCount'] is int
-        ? json['casualLeaveCount']
-        : int.tryParse(json['casualLeaveCount'].toString()) ?? 0;
+    casualLeaveCount = _parseInt(json['casualLeaveCount']);
     dateOfEmployment = json['dateOfEmployment'] ?? '';
     managerName = json['managerName'] ?? '';
-    regularLeaveCount = json['regularLeaveCount'] is int
-        ? json['regularLeaveCount']
-        : int.tryParse(json['regularLeaveCount'].toString()) ?? 0;
+    regularLeaveCount = _parseInt(json['regularLeaveCount']);
   }
 
   int? employeeId;
@@ -34,14 +28,23 @@ class ProfileModel {
   int? regularLeaveCount;
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['employeeId'] = employeeId;
-    map['employeeName'] = employeeName;
-    map['departmentName'] = departmentName;
-    map['casualLeaveCount'] = casualLeaveCount;
-    map['dateOfEmployment'] = dateOfEmployment;
-    map['managerName'] = managerName;
-    map['regularLeaveCount'] = regularLeaveCount;
-    return map;
+    return {
+      'employeeId': employeeId,
+      'employeeName': employeeName,
+      'departmentName': departmentName,
+      'casualLeaveCount': casualLeaveCount,
+      'dateOfEmployment': dateOfEmployment,
+      'managerName': managerName,
+      'regularLeaveCount': regularLeaveCount,
+    };
+  }
+
+  // Helper function to handle both String and int data types
+  int _parseInt(dynamic value) {
+    if (value == null) return 0;
+    if (value is String) {
+      return int.tryParse(value) ?? 0;
+    }
+    return value is int ? value : 0;
   }
 }
