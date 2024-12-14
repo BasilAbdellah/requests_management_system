@@ -15,7 +15,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -55,8 +55,8 @@ class LoginPage extends StatelessWidget {
                         if (txt == null || txt.trim().isEmpty) {
                           return "كود الموظف مطلوب";
                         }
-                        if (txt.length < 6) {
-                          return "كود الموظف يجب أن يتكون من 6 أرقام على الأقل";
+                        if (txt.length < 4) {
+                          return "كود الموظف يجب أن يتكون من 4 أرقام على الأقل";
                         }
                         if (!RegExp(r'^[0-9]+$').hasMatch(txt)) {
                           return "كود الموظف يجب أن يحتوي على أرقام فقط";
