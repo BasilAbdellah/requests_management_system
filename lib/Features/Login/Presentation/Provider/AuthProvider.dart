@@ -8,20 +8,16 @@ class AuthProvider extends ChangeNotifier {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
-
   LoginResponse? _loginResponse;
-
   Future<void> login(
       BuildContext context, int employeeId, String password) async {
     _isLoading = true;
     notifyListeners();
-
     try {
       _loginResponse = await _authService.login(
         employeeId: employeeId,
         password: password,
       );
-
       if (_loginResponse!.status) {
         sshowDialog(
           context,
@@ -47,7 +43,6 @@ class AuthProvider extends ChangeNotifier {
         Colors.red,
       );
     }
-
     _isLoading = false;
     notifyListeners();
   }

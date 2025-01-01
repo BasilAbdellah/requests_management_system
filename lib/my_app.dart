@@ -13,7 +13,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         LoginPage.routeName: (_) => LoginPage(),
-        ProfilePage.routeName: (_) => ProfilePage()
+        ProfilePage.routeName: (_) => ProfilePage(),
+        
       },
       initialRoute: LoginPage.routeName,
       locale: const Locale('ar', ''),
