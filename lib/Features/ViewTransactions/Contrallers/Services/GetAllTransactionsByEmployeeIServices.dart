@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:requests_management_system/Features/Transactions/Data/Models/GetAllTransactionsByEmployeeIdModel.dart';
+import 'package:requests_management_system/Features/ViewTransactions/Data/Models/GetAllTransactionsByEmployeeIdModel.dart';
 
 class TransactionService {
   final Dio _dio = Dio();

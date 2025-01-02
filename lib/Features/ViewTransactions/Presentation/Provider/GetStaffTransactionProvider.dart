@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:requests_management_system/Features/Transactions/Contrallers/Services/GetStaffTransactionServices.dart';
-import 'package:requests_management_system/Features/Transactions/Data/Models/GetStaffTransactionModel.dart';
+import 'package:requests_management_system/Features/ViewTransactions/Contrallers/Services/GetAllTransactionsByEmployeeIServices.dart';
+import 'package:requests_management_system/Features/ViewTransactions/Data/Models/GetStaffTransactionModel.dart';
 
 class TransactionProviderStaff extends ChangeNotifier {
   final TransactionService _service = TransactionService();
   List<GetStaffTransactionModel> _transactions = [];
   bool _isLoading = false;
   String? _errorMessage;
-
-  List<GetStaffTransactionModel> get transactions => _transactions;
+  List<GetStaffTransactionModel> getTransactions() => _transactions;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
