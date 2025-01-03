@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       routes: {
         LoginPage.routeName: (_) => LoginPage(),
         ProfilePage.routeName: (_) => ProfilePage(),
-        UpdatePasswordPage.routeName: (_) => UpdatePasswordPage()
+        UpdatePasswordPage.routeName: (_) => UpdatePasswordPage(),
       },
       initialRoute: LoginPage.routeName,
       locale: const Locale('ar', ''),
