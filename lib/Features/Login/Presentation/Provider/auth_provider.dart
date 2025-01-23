@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:requests_management_system/Features/Login/Contraller/AuthService.dart';
+import 'package:requests_management_system/Features/Login/Contraller/auth_service.dart';
 import 'package:requests_management_system/Features/Login/Data/EmployeeModel.dart';
 import 'package:requests_management_system/Features/Profile/Presentation/Pages/Profile_screen.dart';
 
@@ -26,7 +26,6 @@ class AuthProvider extends ChangeNotifier {
       if (_loginResponse!.status) {
         // Login was successful
         print("تم تسجيل الدخول بنجاح!");
-        print("Token: ${_loginResponse!.token}");
 
         sshowDialog(
           context,
@@ -38,10 +37,6 @@ class AuthProvider extends ChangeNotifier {
         Navigator.pushNamed(
           context,
           ProfilePage.routeName,
-          arguments: {
-            'token': _loginResponse!.token, // Pass the dynamic token
-            'employeeId': employeeId, // Pass the logged-in employee ID
-          },
         );
       } else {
         // Show error dialog

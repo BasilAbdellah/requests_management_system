@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:requests_management_system/Features/Login/Data/base_responce.dart';
+import 'package:requests_management_system/Core/api/base_responce.dart';
 
 class UpdatePasswordService {
   final Dio dio = Dio();
@@ -36,12 +36,12 @@ class UpdatePasswordService {
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
-        return BaseResponce(false, "يرجى إعادة تسجيل الدخول");
+        return BaseResponce(status: false, message:  "يرجى إعادة تسجيل الدخول");
       } else {
-        return BaseResponce(false, "خطأ غير متوقع: ${e.message}");
+        return BaseResponce(status: false, message:  "خطأ غير متوقع: ${e.message}");
       }
     } catch (e) {
-      return BaseResponce(false, '$e');
+      return BaseResponce(status:  false,message:  '$e');
     }
   }
 }

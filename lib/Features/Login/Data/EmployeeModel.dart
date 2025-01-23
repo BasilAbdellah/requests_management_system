@@ -1,12 +1,14 @@
+import 'package:requests_management_system/Core/api/base_responce.dart';
+
 class EmployeeDto {
-  final int? employeeId;
-  final String? employeeName;
-  final String? departmentName;
+  final int employeeId;
+  final String employeeName;
+  final String departmentName;
 
   EmployeeDto({
-    this.employeeId,
-    this.employeeName,
-    this.departmentName,
+    required this.employeeId,
+    required this.employeeName,
+    required this.departmentName,
   });
 
   factory EmployeeDto.fromJson(Map<String, dynamic> json) {
@@ -18,23 +20,18 @@ class EmployeeDto {
   }
 }
 
-class LoginResponse {
-  final String message;
-  final String token;
-  final bool status;
+class LoginResponse extends BaseResponce {
   final EmployeeDto? employeeDto;
 
   LoginResponse({
-    required this.message,
-    required this.token,
-    required this.status,
+    required super.status,
+    required super.message,
     this.employeeDto,
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
     return LoginResponse(
       message: json['message'],
-      token: json['token'],
       status: json['status'],
       employeeDto: json['employeeDto'] != null
           ? EmployeeDto.fromJson(json['employeeDto'])
