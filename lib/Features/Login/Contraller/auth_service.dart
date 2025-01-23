@@ -1,12 +1,13 @@
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:requests_management_system/Core/Utils/sittings/endpoints.dart';
+import 'package:requests_management_system/Core/Utils/settings/endpoints.dart';
+import 'package:requests_management_system/Core/Utils/settings/instances.dart';
 import 'package:requests_management_system/Core/api/api_consumer.dart';
 import 'package:requests_management_system/Core/errors/exceptions.dart';
 import 'package:requests_management_system/Core/local_storage/cash_helper.dart';
-import 'package:requests_management_system/Features/Login/Data/EmployeeModel.dart'; // Import AuthServiceJWT class
+import 'package:requests_management_system/Features/Login/Data/login_resoponce_model.dart'; // Import AuthServiceJWT class
 
 class AuthService {
-  final ApiConsumer apiConsumer = Instance.dioConsumerInstance;
+  final ApiConsumer apiConsumer = Instances.dioConsumerInstance;
 
   /// Login API: Send employee credentials and return response
   Future<dynamic> login({
@@ -22,24 +23,26 @@ class AuthService {
         },
       );
 
-      var result = LoginResponse.fromJson(response.data);
+      var result = LoginResponse.fromJson(response);
 
-      // Save token securely (15 minsts)
-      await AuthServiceJWT.saveToken(ApiKey.tokenKey, response.data['token']);
-      // Save refresh token securely (15 dayes)
-      await AuthServiceJWT.saveToken(
-        ApiKey.refreshTokenKey,
-        response.data['refreshToken'],
-      );
+      if (result.status) {
+        // Save token securely (15 minsts)
+        await AuthServiceJWT.saveToken(ApiKey.tokenKey, response['token']);
+        // Save refresh token securely (15 dayes)
+        await AuthServiceJWT.saveToken(
+          ApiKey.refreshTokenKey,
+          response['refreshToken'],
+        );
 
-      final decodedToken = JwtDecoder.decode(response.data['token']);
+        final decodedToken = JwtDecoder.decode(response['token']);
 
-      await CacheHelper.saveData(
-          key: ApiKey.employeeId, value: decodedToken[ApiKey.employeeId]);
-      await CacheHelper.saveData(
-          key: ApiKey.employeeName, value: decodedToken[ApiKey.employeeName]);
-      await CacheHelper.saveData(
-          key: ApiKey.employeeRole, value: decodedToken[ApiKey.employeeRole]);
+        await CacheHelper.saveData(
+            key: ApiKey.employeeId, value: decodedToken['EmployeeId']);
+        await CacheHelper.saveData(
+            key: ApiKey.employeeName, value: decodedToken['EmployeeName']);
+        await CacheHelper.saveData(
+            key: ApiKey.employeeRole, value: decodedToken['EmployeeRole']);
+      }
 
       return result;
     } on ServerException catch (e) {

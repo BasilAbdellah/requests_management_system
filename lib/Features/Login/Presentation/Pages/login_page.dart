@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:requests_management_system/Core/Utils/customs/dialogs.dart';
 import 'package:requests_management_system/Features/Login/Presentation/Provider/auth_provider.dart';
 import 'package:requests_management_system/Features/Login/Presentation/Widgets/CustomButton.dart';
 import 'package:requests_management_system/Features/Login/Presentation/Widgets/customTextFormField.dart';
@@ -55,9 +56,6 @@ class LoginPage extends StatelessWidget {
                         if (txt == null || txt.trim().isEmpty) {
                           return "كود الموظف مطلوب";
                         }
-                        if (txt.length < 4) {
-                          return "كود الموظف يجب أن يتكون من 4 أرقام على الأقل";
-                        }
                         if (!RegExp(r'^[0-9]+$').hasMatch(txt)) {
                           return "كود الموظف يجب أن يحتوي على أرقام فقط";
                         }
@@ -68,27 +66,7 @@ class LoginPage extends StatelessWidget {
                       secureText: true,
                       ctr: passwordController,
                       txt: "كلمة المرور",
-                      validator: (txt) {
-                        if (txt == null || txt.trim().isEmpty) {
-                          return "كلمة المرور مطلوبة";
-                        }
-                        if (txt.length < 8) {
-                          return "كلمة المرور يجب أن تكون 8 أحرف على الأقل";
-                        }
-                        if (!RegExp(r'[A-Z]').hasMatch(txt)) {
-                          return "كلمة المرور يجب أن تحتوي على حرف كبير واحد على الأقل";
-                        }
-                        if (!RegExp(r'[a-z]').hasMatch(txt)) {
-                          return "كلمة المرور يجب أن تحتوي على حرف صغير واحد على الأقل";
-                        }
-                        if (!RegExp(r'[0-9]').hasMatch(txt)) {
-                          return "كلمة المرور يجب أن تحتوي على رقم واحد على الأقل";
-                        }
-                        if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(txt)) {
-                          return "كلمة المرور يجب أن تحتوي على رمز خاص واحد على الأقل";
-                        }
-                        return null;
-                      },
+                      validator: authProvider.passwordValidation,
                     ),
                     const SizedBox(height: 30),
                     authProvider.isLoading
@@ -107,7 +85,7 @@ class LoginPage extends StatelessWidget {
                                 authProvider.login(
                                     context, employeeId, password);
                               } else {
-                                authProvider.sshowDialog(
+                                sshowDialog(
                                   context,
                                   "خطأ",
                                   "من فضلك أدخل بيانات صحيحة",

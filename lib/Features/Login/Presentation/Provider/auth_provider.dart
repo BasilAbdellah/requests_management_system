@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:requests_management_system/Core/Utils/customs/dialogs.dart';
 import 'package:requests_management_system/Features/Login/Contraller/auth_service.dart';
-import 'package:requests_management_system/Features/Login/Data/EmployeeModel.dart';
+import 'package:requests_management_system/Features/Login/Data/login_resoponce_model.dart';
 import 'package:requests_management_system/Features/Profile/Presentation/Pages/Profile_screen.dart';
 
 class AuthProvider extends ChangeNotifier {
@@ -9,7 +10,6 @@ class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  LoginResponse? _loginResponse;
 
   Future<void> login(
       BuildContext context, int employeeId, String password) async {
@@ -18,19 +18,17 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       // Perform login
-      _loginResponse = await _authService.login(
+      LoginResponse loginResponse = await _authService.login(
         employeeId: employeeId,
         password: password,
       );
 
-      if (_loginResponse!.status) {
+      if (loginResponse.status) {
         // Login was successful
-        print("تم تسجيل الدخول بنجاح!");
-
         sshowDialog(
           context,
           "تم تسجيل الدخول بنجاح",
-          _loginResponse!.message,
+          loginResponse.message,
           Colors.green,
         );
         // Navigate to ProfilePage with token and employeeId
@@ -43,7 +41,7 @@ class AuthProvider extends ChangeNotifier {
         sshowDialog(
           context,
           "خطأ",
-          _loginResponse!.message,
+          loginResponse.message,
           Colors.red,
         );
       }
@@ -61,29 +59,10 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void sshowDialog(
-      BuildContext context, String title, String message, Color color) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          title,
-          textDirection: TextDirection.rtl,
-          textAlign: TextAlign.right,
-          style: TextStyle(color: color),
-        ),
-        content: Text(
-          message,
-          textDirection: TextDirection.rtl,
-          textAlign: TextAlign.right,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text("نعم"),
-          ),
-        ],
-      ),
-    );
+  String? passwordValidation(txt) {
+    if (txt == null || txt.trim().isEmpty) {
+      return "كلمة المرور مطلوبة";
+    }
+    return null;
   }
 }

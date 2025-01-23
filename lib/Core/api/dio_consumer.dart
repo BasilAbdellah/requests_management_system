@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:requests_management_system/Core/Utils/sittings/endpoints.dart';
+import 'package:requests_management_system/Core/Utils/settings/endpoints.dart';
 import 'package:requests_management_system/Core/api/api_consumer.dart';
 import 'package:requests_management_system/Core/api/api_interceptor.dart';
 import 'package:requests_management_system/Core/errors/exceptions.dart';

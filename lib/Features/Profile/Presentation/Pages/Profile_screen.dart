@@ -1,40 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:requests_management_system/Features/Login/Data/employee_model.dart';
 import 'package:requests_management_system/Features/Profile/Presentation/Provider/profile_provider.dart';
+import 'package:requests_management_system/Features/Update_Password/Presentation/Pages/update_password_page.dart';
 
 class ProfilePage extends StatelessWidget {
   static const String routeName = "/Profile";
 
   @override
   Widget build(BuildContext context) {
-    // Extract arguments passed to the ProfilePage
-    final arguments = ModalRoute.of(context)?.settings.arguments as Map?;
-    final token = arguments?['token'];
-    final employeeId = arguments?['employeeId'];
-
-    if (token == null || employeeId == null) {
-      return Scaffold(
-        body: Center(
-          child: Text(
-            "Invalid arguments provided",
-            style: TextStyle(color: Colors.red, fontSize: 18),
-          ),
-        ),
-      );
-    }
+    var profileProvider = Provider.of<ProfileProvider>(context, listen: false);
 
     return Scaffold(
-      body: Consumer<ProfileProvider>(
-        builder: (context, profileProvider, child) {
-          var data = profileProvider.profileModel;
-
-          if (data == null || profileProvider.profileModel?.employeeId != employeeId) {
-            profileProvider.fetchProfile(token: token, employeeId: employeeId);
+      body: FutureBuilder<EmployeeModel>(
+        future: profileProvider.fetchProfile(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
-
+          if (snapshot.hasError) {
+            return Scaffold(
+                body: Center(
+                    child: Text(
+              snapshot.error.toString(),
+              style: const TextStyle(color: Colors.red, fontSize: 18),
+            )));
+          }
+          var data = snapshot.data!;
           return Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -117,13 +111,7 @@ class ProfilePage extends StatelessWidget {
                             subtitle: "تحديث طلبات",
                             onTap: () {
                               Navigator.pushNamed(
-                                context,
-                                '/UpdatePasswordPage',
-                                arguments: {
-                                  'token': token, // Pass the dynamic token
-                                  'employeeId': employeeId, // Pass the logged-in employee ID
-                                },
-                              );
+                                  context, UpdatePasswordPage.routeName);
                             },
                           ),
                           _buildFeatureCard(

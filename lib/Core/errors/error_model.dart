@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 
 class ErrorModel {
   final int status;
@@ -5,10 +6,10 @@ class ErrorModel {
 
   ErrorModel({required this.status, required this.errorMessage});
 
-  factory ErrorModel.fromJson(Map<String, dynamic> jsonData) {
+  factory ErrorModel.responseInfo(Response<dynamic> response) {
     return ErrorModel(
-      status: jsonData['status_code'],
-      errorMessage: jsonData['status_message'],
+      status: response.statusCode ?? 0,
+      errorMessage: response.statusMessage ?? 'unexpected error',
     );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:requests_management_system/Core/Utils/settings/endpoints.dart';
+import 'package:requests_management_system/Core/local_storage/cash_helper.dart';
 import 'package:requests_management_system/Features/Update_Password/Contraller/updatepassword_service.dart';
 
 class PasswordUpdateProvider extends ChangeNotifier {
@@ -29,17 +31,17 @@ class PasswordUpdateProvider extends ChangeNotifier {
   }
 
   Future<bool> updatePassword({
-    required int employeeId,
-    required String token,
     required String oldPassword,
     required String newPassword,
   }) async {
     isLoading = true;
     errorMessage = null;
     notifyListeners();
-    _passwordService = UpdatePasswordService(token: token);
+    _passwordService = UpdatePasswordService();
 
     try {
+      var employeeId =
+          int.tryParse(CacheHelper.getData(key: ApiKey.employeeId)) ?? 0;
       var result = await _passwordService.updatePassword(
           employeeId: employeeId,
           oldPass: oldPassword,
@@ -62,31 +64,5 @@ class PasswordUpdateProvider extends ChangeNotifier {
       notifyListeners();
       return false;
     }
-  }
-
-  void showCustomDialog(
-      BuildContext context, String title, String message, Color color) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          title,
-          textDirection: TextDirection.rtl,
-          textAlign: TextAlign.right,
-          style: TextStyle(color: color),
-        ),
-        content: Text(
-          message,
-          textDirection: TextDirection.rtl,
-          textAlign: TextAlign.right,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text("نعم"),
-          ),
-        ],
-      ),
-    );
   }
 }
