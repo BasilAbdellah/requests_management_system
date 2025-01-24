@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:requests_management_system/Features/ViewTransactions/Contrallers/Services/GetAllTransactionsByEmployeeIServices.dart';
+import 'package:requests_management_system/Features/ViewTransactions/Contrallers/Services/GetStaffTransactionServices.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Data/Models/GetStaffTransactionModel.dart';
 
 class TransactionProviderStaff extends ChangeNotifier {
