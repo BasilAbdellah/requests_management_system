@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:requests_management_system/Core/local_storage/cash_helper.dart';
 import 'package:requests_management_system/Features/Login/Presentation/Provider/auth_provider.dart';
 import 'package:requests_management_system/Features/Profile/Presentation/Provider/profile_provider.dart';
-import 'package:requests_management_system/Features/Transaction/Presentation/Providers/TransactionProvider.dart';
+import 'package:requests_management_system/Features/ViewTransactions/Presentation/Provider/transaction_provider.dart';
 import 'package:requests_management_system/Features/Update_Password/Presentation/Provider/password_update_provider.dart';
 import 'package:requests_management_system/my_app.dart';
 

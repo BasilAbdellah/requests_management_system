@@ -1,5 +1,5 @@
 class Endpoints {
-  static const String baseUrl = 'http://192.168.1.104:8080/api/';
+  static const String baseUrl = 'http://requests-management-system.runasp.net/api/';
 
   static const String login = "Employee/Login";
 }

@@ -1,146 +1,131 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:requests_management_system/Features/Login/Data/employee_model.dart';
 import 'package:requests_management_system/Features/Profile/Presentation/Provider/profile_provider.dart';
 import 'package:requests_management_system/Features/Update_Password/Presentation/Pages/update_password_page.dart';
 
 class ProfilePage extends StatelessWidget {
   static const String routeName = "/Profile";
 
+  const ProfilePage({super.key});
   @override
   Widget build(BuildContext context) {
-    var profileProvider = Provider.of<ProfileProvider>(context, listen: false);
+    var profileProvider = Provider.of<ProfileProvider>(context);
+    var data = profileProvider.employeeData ?? ProfileProvider.employeeModel;
+    if(profileProvider.employeeData == null){
+      profileProvider.fetchProfile(context);
+    }
 
     return Scaffold(
-      body: FutureBuilder<EmployeeModel>(
-        future: profileProvider.fetchProfile(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (snapshot.hasError) {
-            return Scaffold(
-                body: Center(
-                    child: Text(
-              snapshot.error.toString(),
-              style: const TextStyle(color: Colors.red, fontSize: 18),
-            )));
-          }
-          var data = snapshot.data!;
-          return Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xff313131), // top half (dark grey)
-                  Colors.grey[200]!, // bottom half (light grey)
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: [0.5, 0.5],
-              ),
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              const Color(0xff313131), // top half (dark grey)
+              Colors.grey[200]!, // bottom half (light grey)
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0.5, 0.5],
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header Section
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Header Section
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    const Icon(
+                      Icons.calendar_today,
+                      size: 40,
+                      color: Colors.white,
+                    ),
+                    const Spacer(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(
-                          Icons.calendar_today,
-                          size: 40,
-                          color: Colors.white,
+                        Text(
+                          textDirection: TextDirection.rtl,
+                          "مرحباً, ${data.employeeName}",
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                        const Spacer(),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              textDirection: TextDirection.rtl,
-                              "مرحباً, ${data.employeeName}",
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              textAlign: TextAlign.right,
-                              textDirection: TextDirection.rtl,
-                              "${data.departmentName}",
-                              style: const TextStyle(
-                                color: Colors.red,
-                                fontSize: 20,
-                              ),
-                            ),
-                          ],
-                        )
+                        const SizedBox(height: 8),
+                        Text(
+                          textAlign: TextAlign.right,
+                          textDirection: TextDirection.rtl,
+                          "${data.departmentName}",
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 20,
+                          ),
+                        ),
                       ],
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Stats Section
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildStatCard("${data.regularLeaveCount}",
-                            "الإجازات (الاعتيادية)"),
-                        _buildStatCard(
-                            "${data.casualLeaveCount}", "الإجازات (العارضة)"),
-                      ],
-                    ),
-                    const SizedBox(height: 50),
-
-                    // Cards Section
-                    Expanded(
-                      child: GridView.count(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                        children: [
-                          _buildFeatureCard(
-                            context,
-                            icon: Icons.lock,
-                            title: "تحديث كلمة المرور",
-                            subtitle: "تحديث طلبات",
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, UpdatePasswordPage.routeName);
-                            },
-                          ),
-                          _buildFeatureCard(
-                            context,
-                            icon: Icons.create,
-                            title: "إنشاء طلب",
-                            subtitle: "ملئ استمارة الطلب",
-                            onTap: () {
-                              // Navigate to Create Request Page
-                            },
-                          ),
-                          _buildFeatureCard(
-                            context,
-                            icon: Icons.history,
-                            title: "الطلبات السابقة",
-                            subtitle: "الاطلاع على سجل الطلبات",
-                            onTap: () {
-                              // Navigate to Previous Requests Page
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                    )
                   ],
                 ),
-              ),
+                const SizedBox(height: 20),
+
+                // Stats Section
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildStatCard(
+                        "${data.regularLeaveCount}", "الإجازات (الاعتيادية)"),
+                    _buildStatCard(
+                        "${data.casualLeaveCount}", "الإجازات (العارضة)"),
+                  ],
+                ),
+                const SizedBox(height: 50),
+
+                // Cards Section
+                Expanded(
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    children: [
+                      _buildFeatureCard(
+                        context,
+                        icon: Icons.lock,
+                        title: "تحديث كلمة المرور",
+                        subtitle: "تحديث طلبات",
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context, UpdatePasswordPage.routeName);
+                        },
+                      ),
+                      _buildFeatureCard(
+                        context,
+                        icon: Icons.create,
+                        title: "إنشاء طلب",
+                        subtitle: "ملئ استمارة الطلب",
+                        onTap: () {
+                          // Navigate to Create Request Page
+                        },
+                      ),
+                      _buildFeatureCard(
+                        context,
+                        icon: Icons.history,
+                        title: "الطلبات السابقة",
+                        subtitle: "الاطلاع على سجل الطلبات",
+                        onTap: () {
+                          // Navigate to Previous Requests Page
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

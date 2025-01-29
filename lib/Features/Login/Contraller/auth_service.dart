@@ -37,7 +37,7 @@ class AuthService {
         final decodedToken = JwtDecoder.decode(response['token']);
 
         await CacheHelper.saveData(
-            key: ApiKey.employeeId, value: decodedToken['EmployeeId']);
+            key: ApiKey.employeeId, value: int.tryParse(decodedToken['EmployeeId']));
         await CacheHelper.saveData(
             key: ApiKey.employeeName, value: decodedToken['EmployeeName']);
         await CacheHelper.saveData(

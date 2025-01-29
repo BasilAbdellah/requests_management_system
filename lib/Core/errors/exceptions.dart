@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:requests_management_system/Core/Utils/settings/endpoints.dart';
+import 'package:requests_management_system/Core/Utils/settings/instances.dart';
 import 'package:requests_management_system/Core/errors/error_model.dart';
+import 'package:requests_management_system/Core/local_storage/cash_helper.dart';
 
 class ServerException implements Exception {
   final ErrorModel errModel;
@@ -56,9 +59,7 @@ void handleDioExceptions(DioException e) {
         case 400: // Bad request
           throw ServerException(errModel: ErrorModel.responseInfo(e.response!));
         case 401: //unauthorized
-          throw ServerException(
-              errModel: ErrorModel(
-                  status: 401, errorMessage: 'يرجى إعادة تسجيل الدخول'));
+          handleRefreshToken();
         case 403: //forbidden
           throw ServerException(errModel: ErrorModel.responseInfo(e.response!));
         case 404: //not found
@@ -70,5 +71,22 @@ void handleDioExceptions(DioException e) {
         case 504: // Server exception
           throw ServerException(errModel: ErrorModel.responseInfo(e.response!));
       }
+  }
+}
+
+void handleRefreshToken() async {
+  try {
+    var refreshtoke = await AuthServiceJWT.getToken(ApiKey.refreshTokenKey);
+    var responce = await Instances.dioConsumerInstance.dio
+        .get('${Endpoints.baseUrl}Employee/NewToken?refreshToken=$refreshtoke');
+    await AuthServiceJWT.updateToken(ApiKey.tokenKey, responce.data);
+  } on DioException catch (e) {
+    if (e.response?.statusCode == 401) {
+      throw ServerException(
+          errModel:
+              ErrorModel(status: 401, errorMessage: 'يرجى إعادة تسجيل الدخول'));
+    } else {
+      handleDioExceptions(e);
+    }
   }
 }

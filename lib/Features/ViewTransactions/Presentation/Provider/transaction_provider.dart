@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:requests_management_system/Features/Transaction/Contraller/TransactionServices.dart';
-import 'package:requests_management_system/Features/Transaction/Data/StaffTransactionModel.dart';
-import 'package:requests_management_system/Features/Transaction/Data/TransactionEmployeeModel.dart';
-
+import 'package:requests_management_system/Features/ViewTransactions/Contrallers/transactions_service.dart';
+import 'package:requests_management_system/Features/ViewTransactions/Data/StaffTransactionModel.dart';
+import 'package:requests_management_system/Features/ViewTransactions/Data/TransactionEmployeeModel.dart';
 
 class TransactionProvider with ChangeNotifier {
   final TransactionService _transactionService = TransactionService();
@@ -18,13 +17,13 @@ class TransactionProvider with ChangeNotifier {
   String? staffError;
 
   // Fetch employee transactions
-  Future<void> fetchEmployeeTransactions(int employeeId) async {
+  Future<void> fetchEmployeeTransactions() async {
     isLoadingEmployee = true;
     notifyListeners();
 
     try {
       employeeTransactions =
-          await _transactionService.getTransactionsByEmployeeId(employeeId);
+          await _transactionService.getTransactionsByEmployeeId();
       employeeError = null;
     } catch (e) {
       employeeError = e.toString();
@@ -35,13 +34,12 @@ class TransactionProvider with ChangeNotifier {
   }
 
   // Fetch staff transactions
-  Future<void> fetchStaffTransactions(int employeeId) async {
+  Future<void> fetchStaffTransactions() async {
     isLoadingStaff = true;
     notifyListeners();
 
     try {
-      staffTransactions =
-          await _transactionService.getStaffTransactions(employeeId);
+      staffTransactions = await _transactionService.getStaffTransactions();
       staffError = null;
     } catch (e) {
       staffError = e.toString();

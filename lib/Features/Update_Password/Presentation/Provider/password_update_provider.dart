@@ -40,8 +40,7 @@ class PasswordUpdateProvider extends ChangeNotifier {
     _passwordService = UpdatePasswordService();
 
     try {
-      var employeeId =
-          int.tryParse(CacheHelper.getData(key: ApiKey.employeeId)) ?? 0;
+      var employeeId = CacheHelper.getData(key: ApiKey.employeeId);
       var result = await _passwordService.updatePassword(
           employeeId: employeeId,
           oldPass: oldPassword,

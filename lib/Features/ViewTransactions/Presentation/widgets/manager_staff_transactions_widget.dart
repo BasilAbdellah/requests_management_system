@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:requests_management_system/Features/ViewTransactions/Data/Models/GetStaffTransactionModel.dart';
+import 'package:requests_management_system/Features/ViewTransactions/Data/StaffTransactionModel.dart';
 
 class ManagerStaffTransactionsWidget extends StatelessWidget {
-  ManagerStaffTransactionsWidget({
+  const ManagerStaffTransactionsWidget({
         super.key,
         required this.modelData
   });
-  GetStaffTransactionModel modelData;
+  final GetStaffTransactions modelData;
   @override
   Widget build(BuildContext context) {
     return Card(

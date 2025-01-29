@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:requests_management_system/Features/ViewTransactions/Data/Models/GetAllTransactionsByEmployeeIdModel.dart';
+import 'package:requests_management_system/Features/ViewTransactions/Data/TransactionEmployeeModel.dart';
 
 class EmployeeHistoryTransactionsWidget extends StatelessWidget {
-  EmployeeHistoryTransactionsWidget(
-      {
-        super.key,
-        required this.modelData
-      });
-  GetAllTransactionsByEmployeeIdModel modelData;
-  Color? color;
+  const EmployeeHistoryTransactionsWidget({super.key, required this.modelData});
+  final GetAllTransactionsByEmployeeIdModel modelData;
+  static Color color = Colors.black26;
   @override
   Widget build(BuildContext context) {
-    if(modelData.status == "مرفوض")
-      color = Colors.red;
-    else if(modelData.status == "معلق")
-      color = Colors.yellow;
-    else if(modelData.status == "مقبول")
-      color = Colors.green;
+    switch (modelData.status) {
+      case "مرفوضة":
+        color = Colors.red;
+        break;
+      case "معلق":
+        color = Colors.yellow;
+        break;
+      case "مقبول":
+        color = Colors.green;
+        break;
+    }
     return Card(
       child: Column(
         children: [
