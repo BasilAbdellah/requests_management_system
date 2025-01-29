@@ -22,11 +22,11 @@ class UpdatePasswordPage extends StatelessWidget {
         Provider.of<PasswordUpdateProvider>(context, listen: false);
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back)),
-      ),
+      // appBar: AppBar(
+      //   leading: IconButton(
+      //       onPressed: () => Navigator.pop(context),
+      //       icon: const Icon(Icons.arrow_back)),
+      // ),
       body: SingleChildScrollView(
         child: Column(
           children: [

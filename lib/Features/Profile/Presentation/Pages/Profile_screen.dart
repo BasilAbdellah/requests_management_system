@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:requests_management_system/Core/Utils/customs/dialogs.dart';
+import 'package:requests_management_system/Core/Utils/settings/endpoints.dart';
+import 'package:requests_management_system/Core/local_storage/cash_helper.dart';
+import 'package:requests_management_system/Features/Login/Presentation/Pages/login_page.dart';
+import 'package:requests_management_system/Features/Login/Presentation/Widgets/CustomButton.dart';
 import 'package:requests_management_system/Features/Profile/Presentation/Provider/profile_provider.dart';
 import 'package:requests_management_system/Features/Update_Password/Presentation/Pages/update_password_page.dart';
+import 'package:requests_management_system/Features/ViewTransactions/Presentation/Pages/GetAllTransactionsByEmployeeIdScreen.dart';
+import 'package:requests_management_system/Features/ViewTransactions/Presentation/Pages/GetStaffTransactionPage.dart';
 
 class ProfilePage extends StatelessWidget {
   static const String routeName = "/Profile";
@@ -11,7 +18,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var profileProvider = Provider.of<ProfileProvider>(context);
     var data = profileProvider.employeeData ?? ProfileProvider.employeeModel;
-    if(profileProvider.employeeData == null){
+    if (profileProvider.employeeData == null) {
       profileProvider.fetchProfile(context);
     }
 
@@ -32,7 +39,7 @@ class ProfilePage extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Header Section
                 Row(
@@ -117,9 +124,45 @@ class ProfilePage extends StatelessWidget {
                         subtitle: "الاطلاع على سجل الطلبات",
                         onTap: () {
                           // Navigate to Previous Requests Page
+                          Navigator.pushNamed(context,
+                              GetAllTransactionsByEmployeeIdScreen.routeName);
                         },
                       ),
+                      Visibility(
+                        visible: _checkIfManger(),
+                        child: _buildFeatureCard(
+                          context,
+                          icon: Icons.history,
+                          title: "طلبات الموظفين",
+                          subtitle: "الاطلاع على طلبات طاقم العمل",
+                          onTap: () {
+                            // Navigate to Previous Requests Page
+                            Navigator.pushNamed(
+                                context, GetStaffTransactionsScreen.routeName);
+                          },
+                        ),
+                      ),
                     ],
+                  ),
+                ),
+
+                // Footer Section
+                SizedBox(
+                  width: 175,
+                  child: Custombutton(
+                    txt: "تسجيل الخروج",
+                    onLogin: () async {
+                      // remove tokens
+                      await AuthServiceJWT.deleteToken(ApiKey.tokenKey);
+                      await AuthServiceJWT.deleteToken(ApiKey.refreshTokenKey);
+                      // remove employee data
+                      CacheHelper.removeData(key: ApiKey.employeeId);
+                      CacheHelper.removeData(key: ApiKey.employeeName);
+                      CacheHelper.removeData(key: ApiKey.employeeRole);
+
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, LoginPage.routeName, (route) => false);
+                    },
                   ),
                 ),
               ],
@@ -205,5 +248,13 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _checkIfManger() {
+    String role = CacheHelper.getData(key: ApiKey.employeeRole) ?? "Employee";
+    if (role == "Manager") {
+      return true;
+    }
+    return false;
   }
 }

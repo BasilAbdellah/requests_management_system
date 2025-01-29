@@ -8,17 +8,21 @@ import 'package:requests_management_system/Features/ViewTransactions/Data/Transa
 
 class TransactionService {
   final ApiConsumer _apiConsumer = Instances.dioConsumerInstance;
+
   // Fetch transactions by employee ID
   Future<List<GetAllTransactionsByEmployeeIdModel>>
       getTransactionsByEmployeeId() async {
     var employeeId = CacheHelper.getData(key: ApiKey.employeeId);
-    final url = "GetAllTransactionsByEmployeeId/$employeeId";
+    final url = "${Endpoints.getEmployeeTransactions}$employeeId";
 
     try {
       final response = await _apiConsumer.get(url);
-
+      if (response.isEmpty) {
+        return [];
+      }
       return response
-          .map((json) => GetAllTransactionsByEmployeeIdModel.fromJson(json))
+          .map<GetAllTransactionsByEmployeeIdModel>(
+              (json) => GetAllTransactionsByEmployeeIdModel.fromJson(json))
           .toList();
     } on ServerException {
       rethrow;
@@ -27,14 +31,17 @@ class TransactionService {
 
   // Fetch staff transactions
   Future<List<GetStaffTransactions>> getStaffTransactions() async {
-    int employeeId = CacheHelper.getData(key: ApiKey.employeeId);
-
-    final url = "GetStaffTransactions/$employeeId";
+    var managerId = CacheHelper.getData(key: ApiKey.employeeId);
+    final url = "${Endpoints.getStaffTransactions}$managerId";
 
     try {
       final response = await _apiConsumer.get(url);
+      if (response.isEmpty) {
+        return [];
+      }
       return response
-          .map((json) => GetStaffTransactions.fromJson(json))
+          .map<GetStaffTransactions>(
+              (json) => GetStaffTransactions.fromJson(json))
           .toList();
     } on ServerException {
       rethrow;
