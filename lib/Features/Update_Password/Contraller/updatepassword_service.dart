@@ -1,25 +1,17 @@
-import 'package:dio/dio.dart';
-import 'package:requests_management_system/Features/Login/Data/base_responce.dart';
+import 'package:requests_management_system/Core/Utils/settings/instances.dart';
+import 'package:requests_management_system/Core/api/api_consumer.dart';
+import 'package:requests_management_system/Core/api/base_response.dart';
+import 'package:requests_management_system/Core/errors/exceptions.dart';
 
 class UpdatePasswordService {
-  final Dio dio = Dio();
-  final String token;
-
-  UpdatePasswordService({required this.token}) {
-    dio.options.baseUrl = "http://192.168.1.108:8080/api/";
-    dio.options.headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token',
-    };
-  }
-
-  Future<BaseResponce> updatePassword(
+  final ApiConsumer _apiConsumer = Instances.dioConsumerInstance;
+  Future<BaseResponse> updatePassword(
       {required int employeeId,
       required String oldPass,
       required String password,
       required String confirmPassword}) async {
     try {
-      final response = await dio.post(
+      final response = await _apiConsumer.post(
         "Employee/UpdatePassword",
         data: {
           "employeeId": employeeId,
@@ -29,19 +21,13 @@ class UpdatePasswordService {
         },
       );
 
-      if (response.statusCode == 200) {
-        return BaseResponce.fromJson(response.data);
-      } else {
-        throw Exception(response.data['message']);
-      }
-    } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        return BaseResponce(false, "يرجى إعادة تسجيل الدخول");
-      } else {
-        return BaseResponce(false, "خطأ غير متوقع: ${e.message}");
-      }
-    } catch (e) {
-      return BaseResponce(false, '$e');
+      return BaseResponse.fromJson(response);
+    } on ServerException catch (e) {
+      return BaseResponse(
+          status: false,
+          message: e.errModel.status == 401
+              ? e.errModel.errorMessage
+              : "خطأ غير متوقع: ${e.errModel.errorMessage}");
     }
   }
 }

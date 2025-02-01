@@ -5,7 +5,7 @@ typedef Validator = String? Function(String?);
 // ignore: must_be_immutable
 class CustomTextFormField extends StatefulWidget {
   final String txt;
-  final Validator validator;
+  final Validator? validator;
   final TextEditingController ctr;
   final IconData? suffixIcon;
   bool secureText;
@@ -13,7 +13,7 @@ class CustomTextFormField extends StatefulWidget {
     this.secureText = false,
     this.suffixIcon,
     required this.ctr,
-    required this.validator,
+    this.validator,
     required this.txt,
     super.key,
   });
@@ -49,6 +49,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           ),
           prefixIcon: widget.secureText
               ? IconButton(
+                focusNode: FocusNode(skipTraversal: true),
                   icon: Icon(
                     _isPasswordVisible
                         ? Icons.visibility
