@@ -32,6 +32,7 @@ class GetAllTransactionsByEmployeeIdScreen extends StatelessWidget {
       body: Consumer<TransactionProvider>(
         builder: (context, value, child) {
           var dataRetrived = value.employeeTransactions;
+          print(dataRetrived);
           if (dataRetrived.isEmpty && !value.employeeDataLoaded) {
             value.fetchEmployeeTransactions();
             return const Center(child: CircularProgressIndicator());
@@ -47,7 +48,7 @@ class GetAllTransactionsByEmployeeIdScreen extends StatelessWidget {
           return ListView.builder(
             itemBuilder: (context, index) {
               var employeeData = dataRetrived[index];
-              return EmployeeHistoryTransactionsWidget(modelData: employeeData);
+              return EmployeeHistoryTransactionsWidget(model: employeeData,);
             },
             itemCount: value.employeeTransactions.length,
           );

@@ -51,7 +51,7 @@ class GetStaffTransactionsScreen extends StatelessWidget {
           return ListView.builder(
             itemBuilder: (context, index) {
               var staffData = dataRetrived[index];
-              return ManagerStaffTransactionsWidget(modelData: staffData);
+              return ManagerStaffTransactionsWidget(model: staffData);
             },
             itemCount: value.staffTransactions.length,
           );
