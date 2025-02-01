@@ -21,7 +21,7 @@ class EmployeeModel {
 
   factory EmployeeModel.fromJson(Map<String, dynamic> json) {
     return EmployeeModel(
-      employeeId : _parseInt(json[ApiKey.employeeId]),
+      employeeId: _parseInt(json[ApiKey.employeeId]),
       employeeName: json[ApiKey.employeeName],
       departmentName: json['departmentName'],
       managerName: json['managerName'],

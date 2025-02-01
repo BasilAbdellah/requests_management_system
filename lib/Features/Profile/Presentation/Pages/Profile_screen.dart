@@ -9,6 +9,7 @@ import 'package:requests_management_system/Features/Profile/Presentation/Provide
 import 'package:requests_management_system/Features/Update_Password/Presentation/Pages/update_password_page.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Presentation/Pages/GetAllTransactionsByEmployeeIdScreen.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Presentation/Pages/GetStaffTransactionPage.dart';
+import 'package:requests_management_system/Features/send_requests/page/screen_send_request.dart';
 
 class ProfilePage extends StatelessWidget {
   static const String routeName = "/Profile";
@@ -21,23 +22,22 @@ class ProfilePage extends StatelessWidget {
     if (profileProvider.employeeData == null) {
       profileProvider.fetchProfile(context);
     }
-
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xff313131), // top half (dark grey)
-              Colors.grey[200]!, // bottom half (light grey)
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.5, 0.5],
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                const Color(0xff313131), // top half (dark grey)
+                Colors.grey[200]!, // bottom half (light grey)
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.5, 0.5],
+            ),
           ),
-        ),
-        child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -52,20 +52,19 @@ class ProfilePage extends StatelessWidget {
                     ),
                     const Spacer(),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
                           textDirection: TextDirection.rtl,
                           "مرحباً, ${data.employeeName}",
                           style: const TextStyle(
-                            fontSize: 24,
+                            fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          textAlign: TextAlign.right,
                           textDirection: TextDirection.rtl,
                           "${data.departmentName}",
                           style: const TextStyle(
@@ -114,20 +113,24 @@ class ProfilePage extends StatelessWidget {
                         title: "إنشاء طلب",
                         subtitle: "ملئ استمارة الطلب",
                         onTap: () {
-                          // Navigate to Create Request Page
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RequestCreationScreen(
+                                  DepartmentName: data.departmentName,
+                                  EmployeeId: data.employeeId,
+                                  EmployeeName: data.employeeName,
+                                  ManagerName: data.managerName,
+                                ),
+                              ));
                         },
                       ),
-                      _buildFeatureCard(
-                        context,
-                        icon: Icons.history,
-                        title: "الطلبات السابقة",
-                        subtitle: "الاطلاع على سجل الطلبات",
-                        onTap: () {
-                          // Navigate to Previous Requests Page
-                          Navigator.pushNamed(context,
-                              GetAllTransactionsByEmployeeIdScreen.routeName);
-                        },
-                      ),
+                      _buildFeatureCard(context,
+                          icon: Icons.history,
+                          title: "الطلبات السابقة",
+                          subtitle: "الاطلاع على سجل الطلبات", onTap: () {
+                        // Navigate to Previous Requests Page
+                      }),
                       Visibility(
                         visible: _checkIfManger(),
                         child: _buildFeatureCard(
@@ -159,7 +162,7 @@ class ProfilePage extends StatelessWidget {
                       CacheHelper.removeData(key: ApiKey.employeeId);
                       CacheHelper.removeData(key: ApiKey.employeeName);
                       CacheHelper.removeData(key: ApiKey.employeeRole);
-
+                      profileProvider.employeeData = null;
                       Navigator.pushNamedAndRemoveUntil(
                           context, LoginPage.routeName, (route) => false);
                     },
