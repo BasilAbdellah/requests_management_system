@@ -15,7 +15,7 @@ class SendRequestService {
       DateTime? endDate,
       int? substituteEmployeeId,
       int? employeeId,
-      String? itinerar}) async {
+      List<String>? itinerar}) async {
     const String url = "${Endpoints.sendRequestTransaction}";
 
     try {
