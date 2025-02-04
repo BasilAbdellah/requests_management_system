@@ -26,7 +26,7 @@ class SendRequestProvider extends ChangeNotifier {
       DateTime? EndDate,
       int? SubstituteEmployeeId,
       int? EmployeeId,
-      var Itinerar) async {
+      List<String> Itinerar) async {
     _isLoading = true;
     notifyListeners();
 
@@ -48,7 +48,7 @@ class SendRequestProvider extends ChangeNotifier {
 
         DialogHelper.show(
           context,
-          "Success",
+          "نجاح",
           sendRequestModel!.message ?? "The request was sent successfully.",
           Colors.green,
         );
@@ -57,7 +57,7 @@ class SendRequestProvider extends ChangeNotifier {
         // Handle API error when `status` is false
         DialogHelper.show(
           context,
-          "Error",
+          "خطأ",
           sendRequestModel!.message ??
               "An error occurred while sending the request.",
           Colors.red,
@@ -77,7 +77,7 @@ class SendRequestProvider extends ChangeNotifier {
       print("Error occurred: $errorMessage");
       DialogHelper.show(
         context,
-        "Error",
+        "خطأ",
         errorMessage,
         Colors.red,
       );
@@ -86,7 +86,7 @@ class SendRequestProvider extends ChangeNotifier {
       print("Error occurred: $e");
       DialogHelper.show(
         context,
-        "Error",
+        "خطأ",
         "An unexpected error occurred. Please try again.",
         Colors.red,
       );
