@@ -1,41 +1,24 @@
-import 'package:dio/dio.dart';
-import 'package:requests_management_system/Features/Profile/Data/ProfileModel.dart';
+import 'package:requests_management_system/Core/Utils/settings/endpoints.dart';
+import 'package:requests_management_system/Core/Utils/settings/instances.dart';
+import 'package:requests_management_system/Core/api/api_consumer.dart';
+import 'package:requests_management_system/Core/errors/exceptions.dart';
+import 'package:requests_management_system/Core/local_storage/cash_helper.dart';
+import 'package:requests_management_system/Features/Login/Data/employee_model.dart';
 
 class ProfileService {
-  final Dio dio;
-  final String token;
+  final ApiConsumer _apiConsumer = Instances.dioConsumerInstance;
 
-  ProfileService({required this.token}) : dio = Dio() {
-    // Set default base URL and headers for Dio
-    dio.options.baseUrl = "http://192.168.1.108:8080/api/";
-    dio.options.headers = {
-      'Authorization': 'Bearer $token',
-      'Content-Type': 'application/json',
-    };
-  }
-
-  Future<ProfileModel> getProfile(int employeeId) async {
+  Future<EmployeeModel> getProfile() async {
     try {
+      var employeeId = await CacheHelper.getData(key: ApiKey.employeeId);
       // Use the employeeId dynamically in the API endpoint
-      final response = await dio.get("Employee/Profile/$employeeId");
-
+      final response = await _apiConsumer.get("Employee/Profile/$employeeId");
       // Check if the response is successful
-      if (response.statusCode == 200) {
-        print("API Response: ${response.data}");
-
-        // Parse the JSON into ProfileModel
-        return ProfileModel.fromJson(response.data);
-      } else {
-        throw Exception("Unexpected error occurred: ${response.statusCode}");
-      }
-    } on DioException catch (e) {
-      // Handle Dio-specific exceptions
-      throw Exception(
-        "Request failed: ${e.response?.data['message']?.toString() ?? e.message}",
-      );
+      return EmployeeModel.fromJson(response);
+    } on ServerException {
+      rethrow;
     } catch (e) {
-      // Handle other exceptions
-      throw Exception("An error occurred: ${e.toString()}");
+      rethrow;
     }
   }
 }

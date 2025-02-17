@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:requests_management_system/Core/Utils/customs/dialogs.dart';
 import 'package:requests_management_system/Features/Login/Presentation/Widgets/CustomButton.dart';
 import 'package:requests_management_system/Features/Login/Presentation/Widgets/customTextFormField.dart';
 import 'package:requests_management_system/Features/Update_Password/Presentation/Provider/password_update_provider.dart';
@@ -19,12 +20,13 @@ class UpdatePasswordPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final passwordProvider =
         Provider.of<PasswordUpdateProvider>(context, listen: false);
-  // Extract arguments passed to the UpdatePasswordPage from profile
-    final arguments = ModalRoute.of(context)?.settings.arguments as Map?;
-    final token = arguments?['token'];
-    final employeeId = arguments?['employeeId'];
 
     return Scaffold(
+      // appBar: AppBar(
+      //   leading: IconButton(
+      //       onPressed: () => Navigator.pop(context),
+      //       icon: const Icon(Icons.arrow_back)),
+      // ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -93,21 +95,20 @@ class UpdatePasswordPage extends StatelessWidget {
                               if (myKey.currentState!.validate()) {
                                 final success =
                                     await passwordProvider.updatePassword(
-                                      employeeId: employeeId as int,
-                                      token: token as String,
                                   oldPassword: oldPasswordController.text,
                                   newPassword: newPasswordController.text,
                                 );
 
                                 if (success) {
-                                  passwordProvider.showCustomDialog(
+                                  sshowDialog(
                                     context,
                                     "تم بنجاح",
                                     "تم تحديث كلمة المرور بنجاح.",
                                     Colors.green,
+                                    function: () => Navigator.of(context).pop(),
                                   );
                                 } else {
-                                  passwordProvider.showCustomDialog(
+                                  sshowDialog(
                                     context,
                                     "خطأ",
                                     passwordProvider.errorMessage ??
