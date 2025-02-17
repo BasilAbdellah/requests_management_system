@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
             const GetStaffTransactionsScreen(),
         GetAllTransactionsByEmployeeIdScreen.routeName: (_) =>
             const GetAllTransactionsByEmployeeIdScreen(),
+        RequestCreationScreen.routeName: (_) => RequestCreationScreen()
       },
       initialRoute: _initialRoute(),
       locale: const Locale('ar', ''),

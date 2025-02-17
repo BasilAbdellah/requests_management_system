@@ -11,8 +11,8 @@ class ProfileProvider extends ChangeNotifier {
     employeeName: "احمد محمد احمد",
     departmentName: "السويدي",
     managerName: "محمود محمد",
-    casualLeaveCount: 0,
-    regularLeaveCount: 0,
+    casualLeaveCount: "5",
+    regularLeaveCount: "16",
     dateOfEmployment: "1-1-2000",
   );
   EmployeeModel? employeeData;

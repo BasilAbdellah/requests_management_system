@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:requests_management_system/Features/Profile/Presentation/Provider/profile_provider.dart';
 import 'dart:ui' as ui;
 import 'package:requests_management_system/Features/send_requests/Provider/send_request_provider.dart';
 import 'package:requests_management_system/Features/send_requests/widgets/send_mission_request_widget.dart';
@@ -10,17 +11,12 @@ class RequestCreationScreen extends StatefulWidget {
   @override
   _RequestCreationScreenState createState() => _RequestCreationScreenState();
 
-  RequestCreationScreen(
-      {super.key,
-      required this.DepartmentName,
-      required this.EmployeeId,
-      required this.EmployeeName,
-      required this.ManagerName});
+  RequestCreationScreen({super.key});
 
-  final String DepartmentName;
-  final int EmployeeId;
-  final String EmployeeName;
-  final String ManagerName;
+  final int EmployeeId = ProfileProvider.employeeModel.employeeId;
+  final String EmployeeName = ProfileProvider.employeeModel.employeeName;
+  final String ManagerName = ProfileProvider.employeeModel.managerName;
+  final String DepartmentName = ProfileProvider.employeeModel.departmentName;
 }
 
 class _RequestCreationScreenState extends State<RequestCreationScreen> {
@@ -39,7 +35,7 @@ class _RequestCreationScreenState extends State<RequestCreationScreen> {
   }
 
   Widget build(BuildContext context) {
-    final sendRequestProvider = Provider.of<SendRequestProvider>(context);
+    //final sendRequestProvider = Provider.of<SendRequestProvider>(context);
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: true,
@@ -55,8 +51,8 @@ class _RequestCreationScreenState extends State<RequestCreationScreen> {
           ),
           actions: [
             IconButton(
-              icon: Icon(Icons.arrow_forward, color: Colors.white),
-              onPressed: () {},
+              icon: const Icon(Icons.arrow_forward, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
             ),
           ],
           backgroundColor: Color(0xff313131),

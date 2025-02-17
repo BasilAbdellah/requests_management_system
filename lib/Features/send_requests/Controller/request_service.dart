@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:requests_management_system/Core/Utils/settings/endpoints.dart';
 import 'package:requests_management_system/Core/Utils/settings/instances.dart';
 import 'package:requests_management_system/Core/api/api_consumer.dart';

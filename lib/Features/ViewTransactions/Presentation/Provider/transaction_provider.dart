@@ -20,9 +20,6 @@ class TransactionProvider with ChangeNotifier {
 
   // Fetch employee transactions
   Future<void> fetchEmployeeTransactions() async {
-    employeeDataLoaded = true;
-    // notifyListeners();
-
     try {
       employeeTransactions =
           await _transactionService.getTransactionsByEmployeeId();
@@ -37,7 +34,7 @@ class TransactionProvider with ChangeNotifier {
       }
     }
 
-    // employeeDataLoaded = false;
+    employeeDataLoaded = true;
     notifyListeners();
   }
 

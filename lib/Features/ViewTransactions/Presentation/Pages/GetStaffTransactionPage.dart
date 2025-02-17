@@ -36,7 +36,7 @@ class GetStaffTransactionsScreen extends StatelessWidget {
       body: Consumer<TransactionProvider>(
         builder: (context, value, child) {
           var dataRetrived = value.staffTransactions;
-          if (dataRetrived.isEmpty && !value.staffDataLoaded) {
+          if (dataRetrived.isEmpty || !value.staffDataLoaded) {
             value.fetchStaffTransactions();
             return const Center(child: CircularProgressIndicator());
           } else if (value.staffError != null) {
@@ -48,10 +48,11 @@ class GetStaffTransactionsScreen extends StatelessWidget {
                   )),
             );
           }
+          value.staffDataLoaded = false;
           return ListView.builder(
             itemBuilder: (context, index) {
               var staffData = dataRetrived[index];
-              return ManagerStaffTransactionsWidget(modelData: staffData);
+              return ManagerStaffTransactionsWidget(model: staffData);
             },
             itemCount: value.staffTransactions.length,
           );

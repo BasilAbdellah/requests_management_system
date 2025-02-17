@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:requests_management_system/Core/Utils/customs/dialogs.dart';
 import 'package:requests_management_system/Core/Utils/settings/endpoints.dart';
 import 'package:requests_management_system/Core/local_storage/cash_helper.dart';
 import 'package:requests_management_system/Features/Login/Presentation/Pages/login_page.dart';
@@ -58,13 +57,14 @@ class ProfilePage extends StatelessWidget {
                           textDirection: TextDirection.rtl,
                           "مرحباً, ${data.employeeName}",
                           style: const TextStyle(
-                            fontSize: 20,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
                         const SizedBox(height: 8),
                         Text(
+                          textAlign: TextAlign.right,
                           textDirection: TextDirection.rtl,
                           "${data.departmentName}",
                           style: const TextStyle(
@@ -113,24 +113,22 @@ class ProfilePage extends StatelessWidget {
                         title: "إنشاء طلب",
                         subtitle: "ملئ استمارة الطلب",
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => RequestCreationScreen(
-                                  DepartmentName: data.departmentName,
-                                  EmployeeId: data.employeeId,
-                                  EmployeeName: data.employeeName,
-                                  ManagerName: data.managerName,
-                                ),
-                              ));
+                          // Navigate to Create Request Page
+                          Navigator.pushNamed(
+                              context, RequestCreationScreen.routeName);
                         },
                       ),
-                      _buildFeatureCard(context,
-                          icon: Icons.history,
-                          title: "الطلبات السابقة",
-                          subtitle: "الاطلاع على سجل الطلبات", onTap: () {
-                        // Navigate to Previous Requests Page
-                      }),
+                      _buildFeatureCard(
+                        context,
+                        icon: Icons.history,
+                        title: "الطلبات السابقة",
+                        subtitle: "الاطلاع على سجل الطلبات",
+                        onTap: () {
+                          // Navigate to Previous Requests Page
+                          Navigator.pushNamed(context,
+                              GetAllTransactionsByEmployeeIdScreen.routeName);
+                        },
+                      ),
                       Visibility(
                         visible: _checkIfManger(),
                         child: _buildFeatureCard(

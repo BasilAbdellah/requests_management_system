@@ -17,6 +17,8 @@ class ProfileService {
       return EmployeeModel.fromJson(response);
     } on ServerException {
       rethrow;
+    } catch (e) {
+      rethrow;
     }
   }
 }
