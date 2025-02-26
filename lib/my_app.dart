@@ -9,6 +9,7 @@ import 'package:requests_management_system/Features/TransactionDetails/Presentat
 import 'package:requests_management_system/Features/Update_Password/Presentation/Pages/update_password_page.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Presentation/Pages/GetAllTransactionsByEmployeeIdScreen.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Presentation/Pages/GetStaffTransactionPage.dart';
+import 'package:requests_management_system/Features/send_requests/page/screen_send_request.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
             const GetStaffTransactionsScreen(),
         GetAllTransactionsByEmployeeIdScreen.routeName: (_) =>
             const GetAllTransactionsByEmployeeIdScreen(),
+        RequestCreationScreen.routeName: (_) => RequestCreationScreen(),
         TransactionDetailsEmployeeScreen.routeName: (_) =>
             const TransactionDetailsEmployeeScreen(),
         TransactionDetailsMangerScreen.routeName: (_) =>

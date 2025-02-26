@@ -4,10 +4,10 @@ class EmployeeModel {
   final int employeeId;
   final String employeeName;
   final String departmentName;
-  final int casualLeaveCount;
+  final String casualLeaveCount;
   final String dateOfEmployment;
   final String managerName;
-  final int regularLeaveCount;
+  final String regularLeaveCount;
 
   EmployeeModel({
     required this.employeeId,
@@ -21,12 +21,12 @@ class EmployeeModel {
 
   factory EmployeeModel.fromJson(Map<String, dynamic> json) {
     return EmployeeModel(
-      employeeId : _parseInt(json[ApiKey.employeeId]),
+      employeeId: _parseInt(json[ApiKey.employeeId]),
       employeeName: json[ApiKey.employeeName],
       departmentName: json['departmentName'],
       managerName: json['managerName'],
-      casualLeaveCount: _parseInt(json['casualLeaveCount']),
-      regularLeaveCount: _parseInt(json['regularLeaveCount']),
+      casualLeaveCount: json['casualLeaveCount'],
+      regularLeaveCount: json['regularLeaveCount'],
       dateOfEmployment: json['dateOfEmployment'],
     );
   }

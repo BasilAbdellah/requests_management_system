@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:requests_management_system/Core/Utils/customs/dialogs.dart';
 import 'package:requests_management_system/Core/Utils/settings/endpoints.dart';
 import 'package:requests_management_system/Core/local_storage/cash_helper.dart';
 import 'package:requests_management_system/Features/Login/Presentation/Pages/login_page.dart';
@@ -9,6 +8,7 @@ import 'package:requests_management_system/Features/Profile/Presentation/Provide
 import 'package:requests_management_system/Features/Update_Password/Presentation/Pages/update_password_page.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Presentation/Pages/GetAllTransactionsByEmployeeIdScreen.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Presentation/Pages/GetStaffTransactionPage.dart';
+import 'package:requests_management_system/Features/send_requests/page/screen_send_request.dart';
 
 class ProfilePage extends StatelessWidget {
   static const String routeName = "/Profile";
@@ -21,23 +21,22 @@ class ProfilePage extends StatelessWidget {
     if (profileProvider.employeeData == null) {
       profileProvider.fetchProfile(context);
     }
-
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xff313131), // top half (dark grey)
-              Colors.grey[200]!, // bottom half (light grey)
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.5, 0.5],
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                const Color(0xff313131), // top half (dark grey)
+                Colors.grey[200]!, // bottom half (light grey)
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.5, 0.5],
+            ),
           ),
-        ),
-        child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -52,7 +51,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                     const Spacer(),
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
                           textDirection: TextDirection.rtl,
@@ -115,6 +114,8 @@ class ProfilePage extends StatelessWidget {
                         subtitle: "ملئ استمارة الطلب",
                         onTap: () {
                           // Navigate to Create Request Page
+                          Navigator.pushNamed(
+                              context, RequestCreationScreen.routeName);
                         },
                       ),
                       _buildFeatureCard(
@@ -159,7 +160,7 @@ class ProfilePage extends StatelessWidget {
                       CacheHelper.removeData(key: ApiKey.employeeId);
                       CacheHelper.removeData(key: ApiKey.employeeName);
                       CacheHelper.removeData(key: ApiKey.employeeRole);
-
+                      profileProvider.employeeData = null;
                       Navigator.pushNamedAndRemoveUntil(
                           context, LoginPage.routeName, (route) => false);
                     },

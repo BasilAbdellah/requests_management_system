@@ -11,14 +11,15 @@ class ProfileProvider extends ChangeNotifier {
     employeeName: "احمد محمد احمد",
     departmentName: "السويدي",
     managerName: "محمود محمد",
-    casualLeaveCount: 5,
-    regularLeaveCount: 16,
+    casualLeaveCount: "5",
+    regularLeaveCount: "16",
     dateOfEmployment: "1-1-2000",
   );
   EmployeeModel? employeeData;
   Future<void> fetchProfile(BuildContext context) async {
     try {
       employeeData = await ProfileService().getProfile();
+      employeeModel = employeeData!;
       notifyListeners();
     } on ServerException catch (e) {
       if (e.errModel.status == 401) {

@@ -32,7 +32,7 @@ class GetAllTransactionsByEmployeeIdScreen extends StatelessWidget {
       body: Consumer<TransactionProvider>(
         builder: (context, value, child) {
           var dataRetrived = value.employeeTransactions;
-          if (dataRetrived.isEmpty && !value.employeeDataLoaded) {
+          if (!value.employeeDataLoaded) {
             value.fetchEmployeeTransactions();
             return const Center(child: CircularProgressIndicator());
           } else if (value.employeeError != null) {
@@ -44,10 +44,11 @@ class GetAllTransactionsByEmployeeIdScreen extends StatelessWidget {
                   )),
             );
           }
+          value.employeeDataLoaded = false;
           return ListView.builder(
             itemBuilder: (context, index) {
               var employeeData = dataRetrived[index];
-              return EmployeeHistoryTransactionsWidget(modelData: employeeData);
+              return EmployeeHistoryTransactionsWidget(model: employeeData);
             },
             itemCount: value.employeeTransactions.length,
           );

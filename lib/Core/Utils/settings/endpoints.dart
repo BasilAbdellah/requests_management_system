@@ -1,6 +1,6 @@
 class Endpoints {
   static const String baseUrl =
-      'http://requests-management-system.runasp.net/api/';
+      'https://requests-management-system.runasp.net/api/';
 
   static const String login = "Employee/Login";
 
@@ -10,7 +10,11 @@ class Endpoints {
   static const String getStaffTransactions =
       "Transaction/GetStaffTransactions/";
 
-  static const String getTransactionDetails =
+  static const String sendRequestTransaction = "Transaction/PostTransaction";
+
+  static const String getSubstituteEmployee =
+      "Employee/GetEmployeesByDepartmentName/";
+    static const String getTransactionDetails =
       "Transaction/GetTransactionDetails/";
   static const String cancelTransaction =
       "$baseUrl/Transaction/CancelTransaction";
