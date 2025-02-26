@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:requests_management_system/Features/TransactionDetails/Presentation/Pages/transaction_details_manget_screen.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Data/StaffTransactionModel.dart';
 
 class ManagerStaffTransactionsWidget extends StatelessWidget {
@@ -6,13 +7,13 @@ class ManagerStaffTransactionsWidget extends StatelessWidget {
   final GetStaffTransactions model;
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
-        // Navigator.pushNamed(
-        //   context,
-        //   TransactionDetailsMangerScreen.routeName,
-        //   arguments: model.transactionId,
-        // );
+        Navigator.pushNamed(
+          context,
+          TransactionDetailsMangerScreen.routeName,
+          arguments: model.transactionId,
+        );
       },
       child: Card(
         color: Color(0xFFC4B3B3),

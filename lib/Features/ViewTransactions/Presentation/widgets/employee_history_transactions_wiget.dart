@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:requests_management_system/Features/TransactionDetails/Presentation/Pages/transaction_details_employee_screen.dart';
+import 'package:requests_management_system/Features/TransactionDetails/Presentation/Pages/transaction_details_manget_screen.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Data/TransactionEmployeeModel.dart';
 
 class EmployeeHistoryTransactionsWidget extends StatelessWidget {
@@ -18,9 +20,10 @@ class EmployeeHistoryTransactionsWidget extends StatelessWidget {
         color = Colors.green;
         break;
     }
-    return GestureDetector(
+    return InkWell(
       onTap: () {
-        // Navigator.pushNamed(context, TransactionDetailsEmployeeScreen.routeName, model.transactionId);
+        Navigator.pushNamed(context, TransactionDetailsEmployeeScreen.routeName,
+            arguments: model.transactionId);
       },
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
