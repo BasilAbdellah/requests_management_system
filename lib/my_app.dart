@@ -4,6 +4,8 @@ import 'package:requests_management_system/Core/Utils/settings/endpoints.dart';
 import 'package:requests_management_system/Core/local_storage/cash_helper.dart';
 import 'package:requests_management_system/Features/Login/Presentation/Pages/login_page.dart';
 import 'package:requests_management_system/Features/Profile/Presentation/Pages/Profile_screen.dart';
+import 'package:requests_management_system/Features/TransactionDetails/Presentation/Pages/transaction_details_employee_screen.dart';
+import 'package:requests_management_system/Features/TransactionDetails/Presentation/Pages/transaction_details_manget_screen.dart';
 import 'package:requests_management_system/Features/Update_Password/Presentation/Pages/update_password_page.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Presentation/Pages/GetAllTransactionsByEmployeeIdScreen.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Presentation/Pages/GetStaffTransactionPage.dart';
@@ -25,7 +27,11 @@ class MyApp extends StatelessWidget {
             const GetStaffTransactionsScreen(),
         GetAllTransactionsByEmployeeIdScreen.routeName: (_) =>
             const GetAllTransactionsByEmployeeIdScreen(),
-        RequestCreationScreen.routeName: (_) => RequestCreationScreen()
+        RequestCreationScreen.routeName: (_) => RequestCreationScreen(),
+        TransactionDetailsEmployeeScreen.routeName: (_) =>
+            const TransactionDetailsEmployeeScreen(),
+        TransactionDetailsMangerScreen.routeName: (_) =>
+          const TransactionDetailsMangerScreen()
       },
       initialRoute: _initialRoute(),
       locale: const Locale('ar', ''),
