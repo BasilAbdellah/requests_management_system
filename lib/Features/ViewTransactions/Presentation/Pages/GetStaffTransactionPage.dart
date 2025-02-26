@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:requests_management_system/Features/TransactionDetails/Presentation/Pages/transaction_details_manget_screen.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Presentation/Provider/transaction_provider.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Presentation/widgets/manager_staff_transactions_widget.dart';
 
@@ -15,7 +16,7 @@ class GetStaffTransactionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme:const IconThemeData(color: Colors.white),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -30,7 +31,7 @@ class GetStaffTransactionsScreen extends StatelessWidget {
             borderRadius: BorderRadius.only(
           bottomRight: Radius.circular(50),
         )),
-        backgroundColor: Color(0xff313131),
+        backgroundColor:const Color(0xff313131),
       ),
       //drawer: const DrawerWidget(),
       body: Consumer<TransactionProvider>(
@@ -52,7 +53,11 @@ class GetStaffTransactionsScreen extends StatelessWidget {
           return ListView.builder(
             itemBuilder: (context, index) {
               var staffData = dataRetrived[index];
-              return ManagerStaffTransactionsWidget(model: staffData);
+              return InkWell(
+                onTap: (){
+                   Navigator.pushNamed(context, TransactionDetailsMangerScreen.routeName,arguments: staffData.transactionId);
+                },
+                child: ManagerStaffTransactionsWidget(model: staffData));
             },
             itemCount: value.staffTransactions.length,
           );

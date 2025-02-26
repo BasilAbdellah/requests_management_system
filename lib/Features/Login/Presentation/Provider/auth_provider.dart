@@ -11,7 +11,7 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   Future<void> login(
-      BuildContext context, int employeeId, String password) async {
+      BuildContext context, String employeeId, String password) async {
     _isLoading = true;
     notifyListeners();
     try {

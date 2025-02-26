@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:requests_management_system/Features/TransactionDetails/Presentation/Pages/transaction_details_employee_screen.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Presentation/Provider/transaction_provider.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Presentation/widgets/employee_history_transactions_wiget.dart';
 
@@ -48,7 +49,11 @@ class GetAllTransactionsByEmployeeIdScreen extends StatelessWidget {
           return ListView.builder(
             itemBuilder: (context, index) {
               var employeeData = dataRetrived[index];
-              return EmployeeHistoryTransactionsWidget(model: employeeData);
+              return InkWell(
+                onTap: (){
+                  Navigator.pushNamed(context, TransactionDetailsEmployeeScreen.routeName,arguments: employeeData.transactionId);
+                },
+                child: EmployeeHistoryTransactionsWidget(model: employeeData));
             },
             itemCount: value.employeeTransactions.length,
           );

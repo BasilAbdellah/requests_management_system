@@ -78,10 +78,10 @@ class LoginPage extends StatelessWidget {
                             onLogin: () {
                               if (!myKey.currentState!.validate()) {}
                               final employeeId =
-                                  int.tryParse(employeeIdController.text) ?? 0;
+                                  employeeIdController.text ;
                               final password = passwordController.text;
 
-                              if (employeeId > 0 && password.isNotEmpty) {
+                              if (password.trim().isNotEmpty) {
                                 authProvider.login(
                                     context, employeeId, password);
                               } else {

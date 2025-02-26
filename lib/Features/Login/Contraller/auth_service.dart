@@ -11,14 +11,14 @@ class AuthService {
 
   /// Login API: Send employee credentials and return response
   Future<dynamic> login({
-    required int employeeId,
+    required String employeeId,
     required String password,
   }) async {
     try {
       final response = await apiConsumer.post(
         Endpoints.login,
         data: {
-          "employeeId": employeeId,
+          "employeeCode": employeeId,
           "password": password,
         },
       );
