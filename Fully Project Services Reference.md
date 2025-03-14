@@ -111,7 +111,50 @@ class LoginResultDto {
   }
 }
 ```
+```dart
+class UpdatePasswordEmployeeDto {
+  final int employeeId;
+  final String? oldPassword;
+  final String? password;
+  final String? confirmPassword;
 
+  UpdatePasswordEmployeeDto({
+    required this.employeeId,
+    this.oldPassword,
+    this.password,
+    this.confirmPassword,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'employeeId': employeeId,
+      'oldPassword': oldPassword,
+      'password': password,
+      'confirmPassword': confirmPassword,
+    };
+  }
+}
+
+class UpdatePasswordResultDto {
+  final String? message;
+  final bool status;
+  final EmployeeDto employeeDto;
+
+  UpdatePasswordResultDto({
+    this.message,
+    required this.status,
+    required this.employeeDto,
+  });
+
+  factory UpdatePasswordResultDto.fromJson(Map<String, dynamic> json) {
+    return UpdatePasswordResultDto(
+      message: json['message'],
+      status: json['status'],
+      employeeDto: EmployeeDto.fromJson(json['employeeDto']),
+    );
+  }
+}
+```
 #### **Transaction Models**
 
 ```dart
@@ -201,6 +244,124 @@ class TransactionDto {
 }
 ```
 
+```dart
+class StaffTransactionDto {
+  final int transactionId;
+  final String? title;
+  final String? type;
+  final String? status;
+  final String? dueDate;
+  final String? takenDays;
+  final String? sendDate;
+  final String? employeeName;
+  final bool seen;
+
+  StaffTransactionDto({
+    required this.transactionId,
+    this.title,
+    this.type,
+    this.status,
+    this.dueDate,
+    this.takenDays,
+    this.sendDate,
+    this.employeeName,
+    required this.seen,
+  });
+
+  factory StaffTransactionDto.fromJson(Map<String, dynamic> json) {
+    return StaffTransactionDto(
+      transactionId: json['transactionId'],
+      title: json['title'],
+      type: json['type'],
+      status: json['status'],
+      dueDate: json['dueDate'],
+      takenDays: json['takenDays'],
+      sendDate: json['sendDate'],
+      employeeName: json['employeeName'],
+      seen: json['seen'],
+    );
+  }
+}
+
+class GetTransactionByEmployeeDto {
+  final int transactionId;
+  final String? title;
+  final String? type;
+  final String? status;
+  final String? dueDate;
+  final String? takenDays;
+  final String? sendDate;
+
+  GetTransactionByEmployeeDto({
+    required this.transactionId,
+    this.title,
+    this.type,
+    this.status,
+    this.dueDate,
+    this.takenDays,
+    this.sendDate,
+  });
+
+  factory GetTransactionByEmployeeDto.fromJson(Map<String, dynamic> json) {
+    return GetTransactionByEmployeeDto(
+      transactionId: json['transactionId'],
+      title: json['title'],
+      type: json['type'],
+      status: json['status'],
+      dueDate: json['dueDate'],
+      takenDays: json['takenDays'],
+      sendDate: json['sendDate'],
+    );
+  }
+}
+
+class UpdateTransactionDto {
+  final String? title;
+  final String? type;
+  final DateTime startDate;
+  final DateTime endDate;
+  final int substituteEmployeeId;
+  final List<String>? itinerary;
+
+  UpdateTransactionDto({
+    this.title,
+    this.type,
+    required this.startDate,
+    required this.endDate,
+    required this.substituteEmployeeId,
+    this.itinerary,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'type': type,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate.toIso8601String(),
+      'substituteEmployeeId': substituteEmployeeId,
+      'itinerary': itinerary,
+    };
+  }
+}
+
+class UpdateTransactionStatusDto {
+  final String? status;
+  final String? responseMessage;
+
+  UpdateTransactionStatusDto({
+    this.status,
+    this.responseMessage,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'status': status,
+      'responseMessage': responseMessage,
+    };
+  }
+}
+```
+
 ---
 
 ### **2. Services**
@@ -235,6 +396,32 @@ class EmployeeService {
       throw ServerException(errModel: e.errModel);
     }
   }
+
+  EmployeeService({required this.apiConsumer});
+
+  Future<UpdatePasswordResultDto> updatePassword(UpdatePasswordEmployeeDto updatePasswordEmployeeDto) async {
+    try {
+      final response = await apiConsumer.post(
+        '/api/Employee/UpdatePassword',
+        data: updatePasswordEmployeeDto.toJson(),
+      );
+      return UpdatePasswordResultDto.fromJson(response);
+    } on ServerException catch (e) {
+      throw ServerException(errModel: e.errModel);
+    }
+  }
+
+  Future<String> getNewToken(String refreshToken) async {
+    try {
+      final response = await apiConsumer.get(
+        '/api/Employee/NewToken',
+        queryParameters: {'refreshToken': refreshToken},
+      );
+      return response as String;
+    } on ServerException catch (e) {
+      throw ServerException(errModel: e.errModel);
+    }
+  }
 }
 ```
 
@@ -259,6 +446,48 @@ class TransactionService {
     try {
       final response = await apiConsumer.get('/api/Transaction/GetTransactionDetails/$transactionId');
       return TransactionDto.fromJson(response);
+    } on ServerException catch (e) {
+      throw ServerException(errModel: e.errModel);
+    }
+  }
+
+  Future<void> markTransactionAsSeen(int id, String whoSeen) async {
+    try {
+      await apiConsumer.patch(
+        '/api/Transaction/$id/seen',
+        queryParameters: {'whoSeen': whoSeen},
+      );
+    } on ServerException catch (e) {
+      throw ServerException(errModel: e.errModel);
+    }
+  }
+
+  Future<void> editTransaction(int transactionId, UpdateTransactionDto updateTransactionDto) async {
+    try {
+      await apiConsumer.put(
+        '/api/Transaction/EditTransaction',
+        queryParameters: {'transactionId': transactionId},
+        data: updateTransactionDto.toJson(),
+      );
+    } on ServerException catch (e) {
+      throw ServerException(errModel: e.errModel);
+    }
+  }
+
+  Future<void> cancelTransaction(int transactionId) async {
+    try {
+      await apiConsumer.delete('/api/Transaction/CancelTransaction/$transactionId');
+    } on ServerException catch (e) {
+      throw ServerException(errModel: e.errModel);
+    }
+  }
+
+  Future<void> setTransactionStatus(int id, UpdateTransactionStatusDto updateTransactionStatusDto) async {
+    try {
+      await apiConsumer.put(
+        '/api/Transaction/SetStatus/$id',
+        data: updateTransactionStatusDto.toJson(),
+      );
     } on ServerException catch (e) {
       throw ServerException(errModel: e.errModel);
     }
