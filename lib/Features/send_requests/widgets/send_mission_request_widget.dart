@@ -2,7 +2,9 @@ import 'package:country_state_city_picker/country_state_city_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:requests_management_system/Features/Login/Presentation/Widgets/customTextFormField.dart';
 import 'package:requests_management_system/Features/send_requests/Provider/send_request_provider.dart';
+import 'package:requests_management_system/Features/send_requests/widgets/custom_text_field.dart';
 import 'package:requests_management_system/Features/send_requests/widgets/date_field_with_time.dart';
 import 'package:requests_management_system/Features/send_requests/widgets/dialog_alert.dart';
 
@@ -38,10 +40,17 @@ class _SendMissionRequestWidgetState extends State<SendMissionRequestWidget> {
   String? mappedMissionType; // Default mapped value
   String? selectedEmployeeName; // Selected substitute employee name
   int? substituteEmployeeId; // Substitute employee ID
-  String? fromCity;
-  String? toCity;
+  //String? fromCity;
+  //String? toCity;
+  TextEditingController fromCity = TextEditingController();
+  TextEditingController toCity = TextEditingController();
+  TextEditingController fromCityState = TextEditingController();
+  TextEditingController toCityState = TextEditingController();
+  TextEditingController fromCountry = TextEditingController();
+  TextEditingController toCountry = TextEditingController();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  List<String> cities = [];
+  List<String> cities = [ ];
   @override
   void initState() {
     super.initState();
@@ -54,7 +63,12 @@ class _SendMissionRequestWidgetState extends State<SendMissionRequestWidget> {
 
   @override
   Widget build(BuildContext context) {
-    String formattedCities = cities.map((city) => '"$city"').join(', ');
+    cities.add(fromCountry.text);
+    cities.add(toCountry.text);
+    cities.add(fromCityState.text);
+    cities.add(toCityState.text);
+    cities.add(fromCity.text);
+    cities.add(toCity.text);
     final sendRequestProvider =
         Provider.of<SendRequestProvider>(context, listen: false);
     return Expanded(
@@ -209,43 +223,75 @@ class _SendMissionRequestWidgetState extends State<SendMissionRequestWidget> {
                               ],
                             ),
                             SizedBox(height: 8),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text("من المدينة: "),
-                                Text("الى المدينة: "),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: SelectState(
-                                    onCountryChanged: (value) {},
-                                    onStateChanged: (value) {},
-                                    onCityChanged: (value) {
-                                      setState(() {
-                                        fromCity = value;
-                                        updateCitiesList();
-                                      });
-                                    },
+                            Form(
+                              key: formKey,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextField(
+                                            controller: fromCountry,
+                                            title: "From country",
+                                          //formKey: formKey,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      Expanded(
+                                        child: CustomTextField(
+                                            controller: toCountry,
+                                            title: "To country",
+                                          //formKey: formKey,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                Expanded(
-                                  child: SelectState(
-                                    onCountryChanged: (value) {},
-                                    onStateChanged: (value) {},
-                                    onCityChanged: (value) {
-                                      setState(() {
-                                        toCity = value;
-                                        updateCitiesList();
-                                      });
-                                    },
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextField(
+                                            controller: fromCityState,
+                                            title: "From state",
+                                          //formKey: formKey,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      Expanded(
+                                        child: CustomTextField(
+                                            controller: toCityState,
+                                            title: "To state",
+                                          //formKey: formKey,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextField(
+                                            controller: fromCity,
+                                            title: "From City",
+                                          //formKey: formKey,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      Expanded(
+                                        child: CustomTextField(
+                                            controller: toCity,
+                                            title: "To City",
+                                          //formKey: formKey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             )
                           ],
                         ),
@@ -262,6 +308,14 @@ class _SendMissionRequestWidgetState extends State<SendMissionRequestWidget> {
             child: Center(
               child: ElevatedButton(
                 onPressed: () {
+                  print("Button");
+                  if(formKey.currentState!.validate() && sendRequestProvider.emptyFields != ""){
+                    print("error");
+                    DialogHelper.show(context, 'خطأ',
+                        'Enter empty fields ${sendRequestProvider.emptyFields}', Colors.red);
+                    sendRequestProvider.emptyFields = "";
+                    return;
+                  }
                   if (startDate == null || endDate == null) {
                     DialogHelper.show(context, 'خطأ',
                         ' يرجى إدخال تاريخ البدء و الانتهاء', Colors.red);
@@ -276,7 +330,7 @@ class _SendMissionRequestWidgetState extends State<SendMissionRequestWidget> {
                       endDate,
                       substituteEmployeeId, // SubstituteEmployeeId
                       widget.EmployeeId, // Employee ID from token
-                      [formattedCities]);
+                      cities);
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(double.infinity, 50),
@@ -294,11 +348,11 @@ class _SendMissionRequestWidgetState extends State<SendMissionRequestWidget> {
     );
   }
 
-  void updateCitiesList() {
+ /* void updateCitiesList() {
     cities.clear(); // Reset the list to avoid duplicate entries
     if (fromCity != null && toCity != null) {
       cities.add(fromCity!);
       cities.add(toCity!);
     }
-  }
+  }*/
 }
