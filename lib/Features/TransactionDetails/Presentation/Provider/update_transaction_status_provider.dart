@@ -3,9 +3,7 @@ import 'package:requests_management_system/Core/errors/exceptions.dart';
 import 'package:requests_management_system/Features/TransactionDetails/Contraller/update_transaction_status_service.dart';
 
 class UpdateTransactionStatusProvider with ChangeNotifier {
-  final UpdateTransactionStatusService _updateTransactionStatusService;
-
-  UpdateTransactionStatusProvider(this._updateTransactionStatusService);
+  final _service = UpdateTransactionStatusService(); // Initialize directly
 
   bool _isLoading = false;
   String? _error;
@@ -23,7 +21,7 @@ class UpdateTransactionStatusProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      await _updateTransactionStatusService.updateTransactionStatus(
+      await _service.updateTransactionStatus(
         transactionId: transactionId,
         status: status,
         responseMessage: responseMessage,

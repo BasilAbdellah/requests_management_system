@@ -31,4 +31,10 @@ class TransactionDetailsProvider with ChangeNotifier {
     // dataLoaded = false;  // (not needed since data is loaded)
     notifyListeners();
   }
+   void resetData() {
+    transactionDetails = null;
+    dataLoaded = false;
+    error = null;
+    notifyListeners();
+  }
 }

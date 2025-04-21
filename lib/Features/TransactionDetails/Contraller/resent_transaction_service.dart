@@ -8,23 +8,34 @@ import 'package:requests_management_system/Features/TransactionDetails/Data/rese
 class ResendTransactionService {
   final ApiConsumer _apiConsumer = Instances.dioConsumerInstance;
 
-  Future<ResendTransactionModel> resendTransaction(int transactionId) async {
-    final String url = "${Endpoints.resendTransaction}?transactionId=$transactionId";
+  Future<ResendTransactionModel> resendTransaction(
+      int transactionId, String status) async {
+    final String url = "${Endpoints.resendTransaction}$transactionId";
 
     try {
-      var response = await _apiConsumer.post(
+      // Changed from POST to PUT based on the API requirements
+      var response = await _apiConsumer.put(
         url,
+        data: {
+          "status": status.trim(), // Trim whitespace from status
+          "responseMessage": " " // Fixed typo in parameter name
+        },
       );
 
-      if (response == null || response.isEmpty || response is! Map<String, dynamic>) {
-        throw ServerException(errModel: ErrorModel(status: 500,errorMessage: "Invalid response from server"));
+      if (response == null ||
+          response.isEmpty ||
+          response is! Map<String, dynamic>) {
+        throw ServerException(
+            errModel: ErrorModel(
+                status: 500, errorMessage: "Invalid response from server"));
       }
 
       return ResendTransactionModel.fromJson(response);
     } on ServerException {
       rethrow;
     } catch (e) {
-      throw Exception("Failed to resend transaction: $e");
+      // Enhanced error handling
+      throw Exception("Failed to resend transaction: ${e.toString()}");
     }
   }
 }

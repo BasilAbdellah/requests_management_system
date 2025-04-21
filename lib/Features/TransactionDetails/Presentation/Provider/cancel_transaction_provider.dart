@@ -1,37 +1,49 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:requests_management_system/Core/errors/exceptions.dart';
 import 'package:requests_management_system/Features/TransactionDetails/Contraller/canceltransaction_service.dart';
-import 'package:requests_management_system/Features/TransactionDetails/Data/cancel_transaction_model.dart';
 
 class CancelTransactionProvider with ChangeNotifier {
-  final CancelTransactionService _cancelTransactionService = CancelTransactionService();
-
   bool _isLoading = false;
   String? _error;
-  CancelTransactionModel? _cancelTransactionResponse;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
-  CancelTransactionModel? get cancelTransactionResponse => _cancelTransactionResponse;
+
+  Response? response;
 
   Future<void> cancelTransaction(int transactionId) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
-
+    
     try {
-      _cancelTransactionResponse = await _cancelTransactionService.cancelTransaction(transactionId);
-      if (_cancelTransactionResponse?.success == false) {
-        _error = _cancelTransactionResponse?.message ?? "Failed to cancel transaction";
+      response = await CancelTransactionService.cancelTransaction(transactionId);
+      
+      if (response?.statusCode != 200) {
+        _error = _getErrorMessage(response?.statusCode);
       }
     } catch (e) {
-      _error = e.toString();
-      if (e is ServerException) {
-        _error = e.errModel.errorMessage;
-      }
+      _error = "حدث خطأ غير متوقع";
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  String _getErrorMessage(int? statusCode) {
+    switch (statusCode) {
+      case 400:
+        return "طلب غير صالح";
+      case 401:
+        return "غير مصرح";
+      case 403:
+        return "ممنوع";
+      case 404:
+        return "الطلب غير موجود أو تم إلغاؤه مسبقاً";
+      case 500:
+        return "خطأ في الخادم";
+      default:
+        return "حدث خطأ ما";
     }
   }
 }

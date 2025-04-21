@@ -14,16 +14,13 @@ class ResendTransactionProvider with ChangeNotifier {
   String? get error => _error;
   ResendTransactionModel? get resendTransactionResponse => _resendTransactionResponse;
 
-  Future<void> resendTransaction(int transactionId) async {
+  Future<void> resendTransaction(int transactionId,String status) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      _resendTransactionResponse = await _resendTransactionService.resendTransaction(transactionId);
-      if (_resendTransactionResponse?.status != "success") {
-        _error = _resendTransactionResponse?.responceMessage ?? "Failed to resend transaction";
-      }
+      _resendTransactionResponse = await _resendTransactionService.resendTransaction(transactionId,status);
     } catch (e) {
       _error = e.toString();
       if (e is ServerException) {

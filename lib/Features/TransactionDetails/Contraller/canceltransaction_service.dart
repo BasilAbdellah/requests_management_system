@@ -1,29 +1,26 @@
+import 'package:dio/dio.dart';
 import 'package:requests_management_system/Core/Utils/settings/endpoints.dart';
-import 'package:requests_management_system/Core/Utils/settings/instances.dart';
-import 'package:requests_management_system/Core/api/api_consumer.dart';
-import 'package:requests_management_system/Core/errors/error_model.dart';
-import 'package:requests_management_system/Core/errors/exceptions.dart';
-import 'package:requests_management_system/Features/TransactionDetails/Data/cancel_transaction_model.dart';
 
 class CancelTransactionService {
-  final ApiConsumer _apiConsumer = Instances.dioConsumerInstance;
-
-  Future<CancelTransactionModel> cancelTransaction(int transactionId) async {
-    final String url = "${Endpoints.cancelTransaction}$transactionId";
-
+  static Dio dio = Dio();
+  
+  static Future<Response> cancelTransaction(int transactionId) async {
     try {
-      var response = await _apiConsumer.post(url);
-
-      if (response == null || response.isEmpty || response is! Map<String, dynamic>) {
-        throw ServerException(errModel: ErrorModel(errorMessage: "Invalid response from server",status: 500));
+      final String url = "${Endpoints.cancelTransaction}$transactionId";
+      var response = await dio.delete(
+        url,
+        options: Options(
+          validateStatus: (status) => status! < 500, // Don't throw for 4xx errors
+        ),
+      );
+      return response;
+    } on DioException catch (e) {
+      // Handle Dio-specific errors
+      if (e.response != null) {
+        return e.response!; // Return the error response
+      } else {
+        rethrow; // Re-throw other Dio errors
       }
-
-      return CancelTransactionModel.fromJson(response);
-      
-    } on ServerException {
-      rethrow;
-    } catch (e) {
-      throw Exception("Failed to cancel transaction: $e");
     }
   }
 }
