@@ -17,9 +17,9 @@ class Endpoints {
     static const String getTransactionDetails =
       "Transaction/GetTransactionDetails/";
   static const String cancelTransaction =
-      "${baseUrl}Transaction/CancelTransaction";
+      "${baseUrl}Transaction/CancelTransaction/";
 
-  static const String resendTransaction = "${baseUrl}Transaction/SetStatus";
+  static const String resendTransaction = "${baseUrl}Transaction/SetStatus/";
 
   static const String updateTransactionStatus =
       "${baseUrl}Transaction/SetStatus";

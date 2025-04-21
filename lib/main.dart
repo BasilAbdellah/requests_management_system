@@ -7,6 +7,7 @@ import 'package:requests_management_system/Features/Profile/Presentation/Provide
 import 'package:requests_management_system/Features/TransactionDetails/Presentation/Provider/cancel_transaction_provider.dart';
 import 'package:requests_management_system/Features/TransactionDetails/Presentation/Provider/resent_transaction_provider.dart';
 import 'package:requests_management_system/Features/TransactionDetails/Presentation/Provider/transaction_details_provider.dart';
+import 'package:requests_management_system/Features/TransactionDetails/Presentation/Provider/update_transaction_status_provider.dart';
 import 'package:requests_management_system/Features/ViewTransactions/Presentation/Provider/transaction_provider.dart';
 import 'package:requests_management_system/Features/Update_Password/Presentation/Provider/password_update_provider.dart';
 import 'package:requests_management_system/Features/send_requests/Provider/send_request_provider.dart';
@@ -16,26 +17,21 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await CacheHelper().init();
   await SynchronizedTime.initialize();
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(
-      create: (context) => AuthProvider(),
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider(create: (context) => ProfileProvider()),
+        ChangeNotifierProvider(create: (context) => PasswordUpdateProvider()),
+        ChangeNotifierProvider(create: (context) => TransactionProvider()),
+        ChangeNotifierProvider(create: (context) => SendRequestProvider()),
+        ChangeNotifierProvider(create: (context) => TransactionDetailsProvider()),
+        ChangeNotifierProvider(create: (context) => CancelTransactionProvider()),
+        ChangeNotifierProvider(create: (context) => ResendTransactionProvider()),
+        ChangeNotifierProvider(create: (context) => UpdateTransactionStatusProvider()),
+      ],
+      child: const MyApp(),
     ),
-    ChangeNotifierProvider(
-      create: (context) => ProfileProvider(),
-    ),
-    ChangeNotifierProvider(
-      create: (context) => PasswordUpdateProvider(),
-    ),
-    ChangeNotifierProvider(
-      create: (context) => TransactionProvider(),
-    ),
-    ChangeNotifierProvider(
-      create: (context) => SendRequestProvider(),
-    ),
-    ChangeNotifierProvider(
-      create: (context) => TransactionDetailsProvider(),
-    ),
-    ChangeNotifierProvider(create: (context) => CancelTransactionProvider(),),
-    ChangeNotifierProvider(create: (context) => ResendTransactionProvider(),)
-  ], child: const MyApp()));
+  );
 }

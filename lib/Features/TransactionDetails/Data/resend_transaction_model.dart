@@ -1,5 +1,5 @@
 class ResendTransactionModel {
-  final String status;
+  final bool status;
   final String responceMessage;
 
   ResendTransactionModel({required this.status, required this.responceMessage});
@@ -7,7 +7,7 @@ class ResendTransactionModel {
   factory ResendTransactionModel.fromJson(Map<String, dynamic> json) {
     return ResendTransactionModel(
       status: json['status'],
-      responceMessage: json['responceMessage'],
+      responceMessage: json['message'],
     );
   }
 }

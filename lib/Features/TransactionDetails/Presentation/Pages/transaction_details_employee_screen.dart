@@ -9,25 +9,26 @@ class TransactionDetailsEmployeeScreen extends StatelessWidget {
   static const String routeName = "/TransactionDetailsScreen";
   const TransactionDetailsEmployeeScreen({super.key});
 
+  Color _getStatusColor(String? status) {
+    if (status == null) return Colors.grey;
+
+    switch (status.trim()) {
+      case 'معدل':
+        return Colors.grey;
+      case 'مقبول':
+        return Colors.green;
+      case 'مرفوض':
+        return Colors.red;
+      default:
+        return Colors.blue;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final cancelTransactionProvider =
-        Provider.of<CancelTransactionProvider>(context);
-    final resendTransactionProvider =
-        Provider.of<ResendTransactionProvider>(context);
-    final provider = Provider.of<TransactionDetailsProvider>(context);
-    var transactionId = ModalRoute.of(context)!.settings.arguments as int;
-
-    if (!provider.dataLoaded && provider.error == null) {
-      provider.fetchTransactionDetails(transactionId);
-    }
-
-    var startTime =
-        provider.transactionDetails?.startDate?.split('-').join(':') ?? '';
-    var endTime =
-        provider.transactionDetails?.endDate?.split('-').join(':') ?? '';
-    bool isStart = startTime.isNotEmpty;
-    bool isEnd = endTime.isNotEmpty;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
 
     return Scaffold(
       appBar: AppBar(
@@ -37,290 +38,386 @@ class TransactionDetailsEmployeeScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.black87,
         centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(
-              Icons.arrow_forward,
-              color: Colors.white,
-            ),
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
           ),
-        ],
+        ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: !provider.dataLoaded
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : provider.error != null
-                ? Center(child: Text(provider.error!))
-                : SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Card(
-                          color: const Color(0xFFF8F4F9),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                _buildSectionTitle("البيانات"),
-                                const SizedBox(height: 10),
-                                Text(
-                                  "اسم المدير: ${ProfileProvider.employeeModel.managerName}",
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "الإدارة: ${ProfileProvider.employeeModel.departmentName}",
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+      body: Consumer3<TransactionDetailsProvider, CancelTransactionProvider,
+          ResendTransactionProvider>(
+        builder: (context, provider, cancelTransactionProvider,
+            resendTransactionProvider, _) {
+          final transactionId =
+              ModalRoute.of(context)!.settings.arguments as int;
+
+          if (!provider.dataLoaded && provider.error == null) {
+            provider.fetchTransactionDetails(transactionId);
+          }
+
+          final startTime =
+              provider.transactionDetails?.startDate?.split('-').join(':') ?? '';
+          final endTime =
+              provider.transactionDetails?.endDate?.split('-').join(':') ?? '';
+          final isStart = startTime.isNotEmpty;
+          final isEnd = endTime.isNotEmpty;
+
+          return Padding(
+            padding: EdgeInsets.all(isSmallScreen ? 12.0 : 18.0),
+            child: !provider.dataLoaded
+                ? const Center(child: CircularProgressIndicator())
+                : provider.error != null
+                    ? Center(child: Text(provider.error!))
+                    : SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            // Transaction Details Card
+                            Card(
+                              color: const Color(0xFFF8F4F9),
+                              child: Padding(
+                                padding: EdgeInsets.all(isSmallScreen ? 8.0 : 12.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Text(
-                                      "تاريخ الارسال: ${provider.transactionDetails?.creationDate ?? 'غير متاح'}",
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    // Basic Information Section
+                                    _buildSectionTitle("البيانات", isSmallScreen),
+                                    const SizedBox(height: 10),
+                                    _buildResponsiveText(
+                                      "اسم المدير: ${ProfileProvider.employeeModel.managerName}",
+                                      isSmallScreen,
                                     ),
-                                    Text(
-                                      "تاريخ الاستجابة: ${provider.transactionDetails?.respondDate ?? 'لم يتم الرد'}",
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                    _buildResponsiveText(
+                                      "الإدارة: ${ProfileProvider.employeeModel.departmentName}",
+                                      isSmallScreen,
                                     ),
-                                  ],
-                                ),
-                                _buildSectionTitle("تفاصيل الطلب"),
-                                const SizedBox(height: 10),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.all(4),
-                                      decoration: BoxDecoration(
-                                        color: Colors.red,
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(
-                                          color: Colors.white,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        provider.transactionDetails?.status ??
-                                            'غير متاح',
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      "${provider.transactionDetails?.title ?? 'غير متاح'}  ${provider.transactionDetails?.type ?? 'غير متاح'}",
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                const Text(
-                                  "تاريخ بداية ونهاية الاجازة",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF9A4B4B),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: Colors.white,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            Text(
-                                              provider.transactionDetails
-                                                      ?.startDate ??
-                                                  'غير متاح',
-                                              textDirection: TextDirection.rtl,
-                                            ),
-                                            Visibility(
-                                              visible: isStart,
-                                              child: Text(startTime),
-                                            ),
-                                          ],
-                                        ),
-                                        const Icon(Icons.arrow_back),
-                                        Text(
-                                          provider.transactionDetails
-                                                  ?.takenDays ??
-                                              'غير متاح',
-                                        ),
-                                        // Conditionally render the end date section
-                                        if (provider
-                                                .transactionDetails?.endDate !=
-                                            null) ...[
-                                          const Icon(Icons.arrow_back),
-                                          Column(
-                                            children: [
-                                              Text(
-                                                provider.transactionDetails!
-                                                    .endDate!,
-                                                textDirection:
-                                                    TextDirection.rtl,
-                                              ),
-                                              Visibility(
-                                                visible: isEnd,
-                                                child: Text(endTime),
-                                              ),
-                                            ],
+                                    
+                                    // Dates Section
+                                    if (isPortrait || isSmallScreen)
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        children: [
+                                          _buildResponsiveText(
+                                            "تاريخ الارسال: ${provider.transactionDetails?.creationDate ?? 'غير متاح'}",
+                                            isSmallScreen,
+                                          ),
+                                          _buildResponsiveText(
+                                            "تاريخ الاستجابة: ${provider.transactionDetails?.respondDate ?? 'لم يتم الرد'}",
+                                            isSmallScreen,
                                           ),
                                         ],
+                                      )
+                                    else
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          _buildResponsiveText(
+                                            "تاريخ الارسال: ${provider.transactionDetails?.creationDate ?? 'غير متاح'}",
+                                            isSmallScreen,
+                                          ),
+                                          _buildResponsiveText(
+                                            "تاريخ الاستجابة: ${provider.transactionDetails?.respondDate ?? 'لم يتم الرد'}",
+                                            isSmallScreen,
+                                          ),
+                                        ],
+                                      ),
+                                    
+                                    // Request Details Section
+                                    _buildSectionTitle("تفاصيل الطلب", isSmallScreen),
+                                    const SizedBox(height: 10),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        if (provider.transactionDetails?.status?.isNotEmpty ?? false)
+                                          Container(
+                                            padding: const EdgeInsets.all(4),
+                                            decoration: BoxDecoration(
+                                              color: _getStatusColor(provider.transactionDetails?.status),
+                                              borderRadius: BorderRadius.circular(10),
+                                              border: Border.all(
+                                                color: Colors.white,
+                                                width: 1,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              provider.transactionDetails?.status ?? 'غير متاح',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: isSmallScreen ? 16 : 20,
+                                              ),
+                                            ),
+                                          ),
+                                        Flexible(
+                                          child: Text(
+                                            "${provider.transactionDetails?.title ?? 'غير متاح'}  ${provider.transactionDetails?.type ?? 'غير متاح'}",
+                                            style: TextStyle(
+                                              fontSize: isSmallScreen ? 16 : 20,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                  ),
+                                    const SizedBox(height: 10),
+                                    
+                                    Text(
+                                      "تاريخ بداية ونهاية الاجازة",
+                                      style: TextStyle(
+                                        fontSize: isSmallScreen ? 16 : 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF9A4B4B),
+                                          borderRadius: BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: isPortrait || isSmallScreen
+                                            ? Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                    children: [
+                                                      Column(
+                                                        children: [
+                                                          Text(
+                                                            provider.transactionDetails?.startDate ?? 'غير متاح',
+                                                            textDirection: TextDirection.rtl,
+                                                            style: const TextStyle(color: Colors.white),
+                                                          ),
+                                                          if (isStart)
+                                                            Text(
+                                                              startTime,
+                                                              style: const TextStyle(color: Colors.white),
+                                                            ),
+                                                        ],
+                                                      ),
+                                                      Text(
+                                                        provider.transactionDetails?.takenDays ?? 'غير متاح',
+                                                        style: const TextStyle(color: Colors.white),
+                                                      ),
+                                                      if (provider.transactionDetails?.endDate != null) ...[
+                                                        Column(
+                                                          children: [
+                                                            Text(
+                                                              provider.transactionDetails!.endDate!,
+                                                              textDirection: TextDirection.rtl,
+                                                              style: const TextStyle(color: Colors.white),
+                                                            ),
+                                                            if (isEnd)
+                                                              Text(
+                                                                endTime,
+                                                                style: const TextStyle(color: Colors.white),
+                                                              ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ],
+                                                  ),
+                                                  const Icon(Icons.arrow_downward, color: Colors.white),
+                                                ],
+                                              )
+                                            : Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Column(
+                                                    children: [
+                                                      Text(
+                                                        provider.transactionDetails?.startDate ?? 'غير متاح',
+                                                        textDirection: TextDirection.rtl,
+                                                        style: const TextStyle(color: Colors.white),
+                                                      ),
+                                                      if (isStart)
+                                                        Text(
+                                                          startTime,
+                                                          style: const TextStyle(color: Colors.white),
+                                                        ),
+                                                    ],
+                                                  ),
+                                                  const Icon(Icons.arrow_back, color: Colors.white),
+                                                  Text(
+                                                    provider.transactionDetails?.takenDays ?? 'غير متاح',
+                                                    style: const TextStyle(color: Colors.white),
+                                                  ),
+                                                  if (provider.transactionDetails?.endDate != null) ...[
+                                                    const Icon(Icons.arrow_back, color: Colors.white),
+                                                    Column(
+                                                      children: [
+                                                        Text(
+                                                          provider.transactionDetails!.endDate!,
+                                                          textDirection: TextDirection.rtl,
+                                                          style: const TextStyle(color: Colors.white),
+                                                        ),
+                                                        if (isEnd)
+                                                          Text(
+                                                            endTime,
+                                                            style: const TextStyle(color: Colors.white),
+                                                          ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ],
+                                              ),
+                                      ),
+                                    ),
+                                    
+                                    // Response Message Section
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        child: Text(
+                                          " ${provider.transactionDetails?.respondMessage ?? ''}",
+                                          textAlign: TextAlign.right,
+                                          style: const TextStyle(color: Colors.black),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text(
-                                      " ${provider.transactionDetails?.respondMessage ?? ''}",
-                                      textAlign: TextAlign.right,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              await cancelTransactionProvider
-                                  .cancelTransaction(transactionId);
-                              if (cancelTransactionProvider.error == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(cancelTransactionProvider
-                                            .cancelTransactionResponse
-                                            ?.message ??
-                                        "تم إلغاء الطلب بنجاح"),
-                                    backgroundColor: Colors.green,
-                                  ),
-                                );
-                                // Optionally, refresh the transaction details
-                                provider.fetchTransactionDetails(transactionId);
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text(cancelTransactionProvider.error!),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF313131),
-                            ),
-                            child: const Text(
-                              "إلغاء الطلب",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Visibility(
-                          visible: true, // Set this conditionally if needed
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                await resendTransactionProvider
-                                    .resendTransaction(transactionId);
-                                if (resendTransactionProvider.error == null) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(resendTransactionProvider
-                                              .resendTransactionResponse
-                                              ?.responceMessage ??
-                                          "تم إعادة الإرسال بنجاح"),
-                                      backgroundColor: Colors.green,
-                                    ),
-                                  );
-                                  // Optionally, refresh the transaction details
-                                  provider
-                                      .fetchTransactionDetails(transactionId);
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          resendTransactionProvider.error!),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF96840C),
                               ),
-                              child: const Text(
+                            ),
+                            const SizedBox(height: 20),
+                            
+                            // Cancel Request Button
+                            if (provider.transactionDetails?.status?.trim() != 'مقبول' && 
+                                provider.transactionDetails?.status?.trim() != 'مرفوض')
+                              _buildActionButton(
+                                "إلغاء الطلب",
+                                const Color(0xFF313131),
+                                () async {
+                                  await cancelTransactionProvider.cancelTransaction(transactionId);
+                                  
+                                  if (cancelTransactionProvider.response?.statusCode == 200) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("تم إلغاء الطلب بنجاح"),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                    provider.fetchTransactionDetails(transactionId);
+                                  } 
+                                  else if (cancelTransactionProvider.error != null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(cancelTransactionProvider.error!),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                },
+                                isSmallScreen,
+                              ),
+                            
+                            const SizedBox(height: 20),
+                            
+                            // Resend Request Button
+                            if (provider.transactionDetails?.status?.trim() == 'معدل')
+                              _buildActionButton(
                                 "إعادة الارسال",
-                                style: TextStyle(color: Colors.white),
+                                const Color(0xFF96840C),
+                                () async {
+                                  await resendTransactionProvider.resendTransaction(transactionId, "Pending");
+                                  if (resendTransactionProvider.error == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(resendTransactionProvider
+                                                .resendTransactionResponse?.responceMessage ??
+                                            "تم إعادة الإرسال بنجاح"),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                    provider.fetchTransactionDetails(transactionId);
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(resendTransactionProvider.error!),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                },
+                                isSmallScreen,
                               ),
-                            ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  // Helper Widgets
+  Widget _buildSectionTitle(String title, bool isSmallScreen) {
     return Center(
       child: Column(
         children: [
-          Text(title),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: isSmallScreen ? 18 : 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           Container(
             color: Colors.black,
             width: 50,
             height: 2,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildResponsiveText(String text, bool isSmallScreen) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: isSmallScreen ? 16 : 20,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+    String text,
+    Color color,
+    VoidCallback onPressed,
+    bool isSmallScreen,
+  ) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          padding: EdgeInsets.symmetric(
+            vertical: isSmallScreen ? 12 : 16,
+          ),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: isSmallScreen ? 16 : 18,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
