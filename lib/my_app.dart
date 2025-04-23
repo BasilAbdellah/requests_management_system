@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           const TransactionDetailsMangerScreen()
       },
       initialRoute: _initialRoute(),
-      locale: const Locale('ar', ''),
+      locale: const Locale('ar', ''),//just update
     );
   }
 
