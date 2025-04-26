@@ -11,6 +11,7 @@ class SendRequestProvider extends ChangeNotifier {
   List<GetSubstituteEmployeeModel> employees = [];
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  String emptyFields = "";
 
   Future<void> getSubstituteEmployee(String departmentName) async {
     employees =
